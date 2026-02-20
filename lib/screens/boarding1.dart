@@ -14,7 +14,7 @@ class Boarding1 extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Text(
-                'TRACK YOUR FARM USING IOT SENSORS',
+                'TRACK YOUR FARM USING IOT SENSORS dfsafs',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
