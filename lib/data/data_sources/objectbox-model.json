@@ -1,0 +1,227 @@
+{
+  "_note1": "KEEP THIS FILE! Check it into a version control system (VCS) like git.",
+  "_note2": "ObjectBox manages crucial IDs for your object model. See docs for details.",
+  "_note3": "If you have VCS merge conflicts, you must resolve them according to ObjectBox docs.",
+  "entities": [
+    {
+      "id": "1:8191001011009218982",
+      "lastPropertyId": "3:4125816811933832349",
+      "name": "AuthToken",
+      "properties": [
+        {
+          "id": "1:2228108815030582429",
+          "name": "storageID",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:742092984816188115",
+          "name": "token",
+          "type": 9
+        },
+        {
+          "id": "3:4125816811933832349",
+          "name": "refreshToken",
+          "type": 9
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "2:1079510562737757718",
+      "lastPropertyId": "3:5783494486336196983",
+      "name": "LocaleModel",
+      "properties": [
+        {
+          "id": "1:2683728821773813527",
+          "name": "storageID",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:517588696485665186",
+          "name": "languageCode",
+          "type": 9
+        },
+        {
+          "id": "3:5783494486336196983",
+          "name": "isFirstTime",
+          "type": 1
+        }
+      ],
+      "relations": []
+    },
+    {
+      "id": "3:3379791530785140218",
+      "lastPropertyId": "30:3198876252525019743",
+      "name": "User",
+      "properties": [
+        {
+          "id": "1:6285474902773064722",
+          "name": "storageID",
+          "type": 6,
+          "flags": 1
+        },
+        {
+          "id": "2:2742488988015312469",
+          "name": "userID",
+          "indexId": "1:6555721987836142718",
+          "type": 9,
+          "flags": 34848
+        },
+        {
+          "id": "3:1122004979063295114",
+          "name": "firstName",
+          "type": 9
+        },
+        {
+          "id": "4:5540807986218267836",
+          "name": "lastName",
+          "type": 9
+        },
+        {
+          "id": "5:7488471668424326960",
+          "name": "fullNameOnId",
+          "type": 9
+        },
+        {
+          "id": "6:4618964508325505055",
+          "name": "nationalId",
+          "type": 9
+        },
+        {
+          "id": "7:7680832610000945002",
+          "name": "email",
+          "type": 9
+        },
+        {
+          "id": "8:4114172744283726683",
+          "name": "phone",
+          "type": 9
+        },
+        {
+          "id": "9:8905163284052482006",
+          "name": "birthDate",
+          "type": 10
+        },
+        {
+          "id": "10:1135089138908269607",
+          "name": "gender",
+          "type": 9
+        },
+        {
+          "id": "11:6812454584161526051",
+          "name": "isActive",
+          "type": 1
+        },
+        {
+          "id": "12:375987656918990642",
+          "name": "emailVerifiedAt",
+          "type": 10
+        },
+        {
+          "id": "13:7712800612879847154",
+          "name": "phoneVerifiedAt",
+          "type": 10
+        },
+        {
+          "id": "14:3389882637997125613",
+          "name": "createdAt",
+          "type": 10
+        },
+        {
+          "id": "15:4282167945620272520",
+          "name": "updatedAt",
+          "type": 10
+        },
+        {
+          "id": "16:1271201779807569767",
+          "name": "acceptedTerms",
+          "type": 1
+        },
+        {
+          "id": "17:8150502816201078488",
+          "name": "acceptedTermsAt",
+          "type": 10
+        },
+        {
+          "id": "18:6407386176097255300",
+          "name": "acceptedDisclaimer",
+          "type": 1
+        },
+        {
+          "id": "19:3302614490899144755",
+          "name": "acceptedDisclaimerAt",
+          "type": 10
+        },
+        {
+          "id": "20:4287427099188539931",
+          "name": "patientDetailsComplete",
+          "type": 1
+        },
+        {
+          "id": "21:3867094119670243555",
+          "name": "patientDetailsCompletedAt",
+          "type": 10
+        },
+        {
+          "id": "22:4457132370580481998",
+          "name": "providerDetailsComplete",
+          "type": 1
+        },
+        {
+          "id": "23:4561610130269683014",
+          "name": "providerDetailsCompletedAt",
+          "type": 10
+        },
+        {
+          "id": "24:8605421849836641241",
+          "name": "categoryId",
+          "type": 6
+        },
+        {
+          "id": "25:5976176258920198041",
+          "name": "requestUpdatedBy",
+          "type": 9
+        },
+        {
+          "id": "26:3380747400242707519",
+          "name": "requestUpdatedAt",
+          "type": 10
+        },
+        {
+          "id": "27:927808250892560947",
+          "name": "declinationReason",
+          "type": 9
+        },
+        {
+          "id": "28:2957840177645514620",
+          "name": "onlineStatus",
+          "type": 9
+        },
+        {
+          "id": "29:3563285707346189738",
+          "name": "avatar",
+          "type": 9
+        },
+        {
+          "id": "30:3198876252525019743",
+          "name": "isProvider",
+          "type": 1
+        }
+      ],
+      "relations": []
+    }
+  ],
+  "lastEntityId": "3:3379791530785140218",
+  "lastIndexId": "1:6555721987836142718",
+  "lastRelationId": "0:0",
+  "lastSequenceId": "0:0",
+  "modelVersion": 5,
+  "modelVersionParserMinimum": 5,
+  "retiredEntityUids": [],
+  "retiredIndexUids": [],
+  "retiredPropertyUids": [],
+  "retiredRelationUids": [],
+  "version": 1
+}

@@ -5,39 +5,50 @@ class Boarding1 extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    const imagePath = 'assets/images/img.jpeg';
+    
     return Scaffold(
-      body: SafeArea(
+      // We use extendBodyBehindAppBar if you have an AppBar, 
+      // but for a clean boarding screen, body is enough.
+      body: Container(
+        // Force the container to take up all available space
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage(imagePath),
+            fit: BoxFit.cover, // This is the magic line that fills the space
+          ),
+        ),
         child: Padding(
           padding: const EdgeInsets.all(20.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'TRACK YOUR FARM USING IOT SENSOR sfdfsdS',
+              const Text(
+                'TRACK YOUR \nFARM\n USING IOT SENSORS',
                 style: TextStyle(
-                  fontSize: 28,
+                  fontSize: 28, 
                   fontWeight: FontWeight.bold,
+                  color: Colors.white, // Changed to white for better visibility on images
                 ),
               ),
               const SizedBox(height: 20),
               Text(
-                '',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey[700],
-                ),
+                'Monitor your crops in real-time.', 
+                style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.8)),
               ),
               const SizedBox(height: 40),
               Align(
                 alignment: Alignment.bottomRight,
                 child: ElevatedButton(
                   onPressed: () {
-                    // هنا هنربطها بالشاشة اللي بعديها (Boarding2)
+                    // Navigate to Boarding2
                   },
                   child: const Text('Next'),
                 ),
-              )
+              ),
             ],
           ),
         ),
