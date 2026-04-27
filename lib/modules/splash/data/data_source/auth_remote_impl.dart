@@ -1,8 +1,6 @@
 import 'dart:developer';
 import 'package:agri/core/configs/endpoints.dart';
-import 'package:agri/core/infrastructure/di.dart';
 import 'package:agri/core/utils/model_parser.dart';
-import 'package:agri/data/data_sources/user_local_data_source.dart';
 import 'package:agri/data/interfaces/abstract_http_data_source.dart';
 import 'package:agri/data/models/failure.dart';
 import 'package:agri/data/models/option.dart';
@@ -23,16 +21,10 @@ class SplashRemoteDataSourceImpl extends SpalshRemoteDataSource {
 
   @override
   Future<Option<Failure, User>> getme() async {
-    final result = await httpInterface.get(
-      url: EndPoints.getme,
-    );
+    final result = await httpInterface.get(url: EndPoints.getme);
     log(result.toString());
     return result.fold((l) => l, (r) {
-      return ModelParser.parse(
-        () => User.fromJson(r.data['data'],
-            isProvider: di<UserLocalDataSource>().returnUser()!.isProvider),
-      );
+      return ModelParser.parse(() => User.fromJson(r.data['data']));
     });
   }
-
 }

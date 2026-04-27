@@ -56,7 +56,7 @@ class MyCheckbox extends StatelessWidget {
                   border: Border.all(
                     color: value
                         ? ColorsManager.primary
-                        : ColorsManager.greyD5D7DA,
+                        : ColorsManager.grey,
                   ),
                 ),
                 child: Center(
@@ -82,7 +82,7 @@ class MyCheckbox extends StatelessWidget {
                   border: Border.all(
                     color: value
                         ? ColorsManager.primary
-                        : ColorsManager.greyD5D7DA,
+                        : ColorsManager.grey,
                   ),
                 ),
                 child: Center(

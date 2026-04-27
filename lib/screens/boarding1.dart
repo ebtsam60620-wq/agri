@@ -1,3 +1,4 @@
+import 'package:agri/core/utils/extension_methods.dart';
 import 'package:flutter/material.dart';
 
 class Boarding1 extends StatelessWidget {
@@ -37,7 +38,7 @@ class Boarding1 extends StatelessWidget {
               const SizedBox(height: 20),
               Text(
                 'Monitor your crops in real-time.', 
-                style: TextStyle(fontSize: 16, color: Colors.white.withOpacity(0.8)),
+                style: TextStyle(fontSize: 16, color: Colors.white.withBlue(0.8.toAlpha)),
               ),
               const SizedBox(height: 40),
               Align(

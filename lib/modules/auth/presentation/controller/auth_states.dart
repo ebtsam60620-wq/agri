@@ -1,7 +1,7 @@
 part of 'auth_notifier.dart';
 
 class AuthState {
-  final AuthLoadingState loadingState;
+  final Requestenum loadingState;
   final AuthCurrentScreenFlow currentScreenFlow;
   final String? errorMessage;
   final String? successMessage;
@@ -10,10 +10,8 @@ class AuthState {
   final UserTypeEnum userType;
   final String otpPhoneNumber;
   final DateTime? otpRequestedAt;
-  final ProviderCategoryModel? providerType;
-  final List<ProviderCategoryModel> providerCategories;
-  final String? terms, disclaimer;
   final User? user;
+
   const AuthState({
     required this.loadingState,
     required this.currentScreenFlow,
@@ -24,22 +22,18 @@ class AuthState {
     this.errorMessage,
     this.otpPhoneNumber = '',
     this.otpRequestedAt,
-    this.providerType,
-    this.providerCategories = const [],
     this.resetToken,
-    this.terms,
-    this.disclaimer,
   });
 
   factory AuthState.initial() {
     return const AuthState(
       currentScreenFlow: AuthCurrentScreenFlow.login,
-      loadingState: AuthLoadingState.initial,
+      loadingState: Requestenum.init,
     );
   }
 
   AuthState copyWith({
-    AuthLoadingState? loadingState,
+    Requestenum? loadingState,
     AuthCurrentScreenFlow? currentScreenFlow,
     User? user,
     bool? isGuest,
@@ -48,11 +42,7 @@ class AuthState {
     String otpPhoneNumber = '',
     DateTime? otpRequestedAt,
     String? successMessage,
-    ProviderCategoryModel? providerType,
     String? resetToken,
-    List<ProviderCategoryModel>? providerCategories,
-    String? disclaimer,
-    String? terms,
   }) {
     return AuthState(
       loadingState: loadingState ?? this.loadingState,
@@ -65,11 +55,7 @@ class AuthState {
           otpPhoneNumber.isNotEmpty ? otpPhoneNumber : this.otpPhoneNumber,
       otpRequestedAt: otpRequestedAt ?? this.otpRequestedAt,
       successMessage: successMessage ?? this.successMessage,
-      providerType: providerType ?? this.providerType,
       resetToken: resetToken ?? this.resetToken,
-      providerCategories: providerCategories ?? this.providerCategories,
-      disclaimer: disclaimer ?? this.disclaimer,
-      terms: terms ?? this.terms,
     );
   }
 
@@ -84,37 +70,22 @@ class AuthState {
         ', otpPhoneNumber: $otpPhoneNumber'
         ', otpRequestedAt: $otpRequestedAt'
         ', successMessage: $successMessage'
-        ', providerType: $providerType'
         ', resetToken: $resetToken'
-        ', providerCategories: $providerCategories)';
+        ')';
   }
 }
 
-enum AuthLoadingState {
-  initial,
-  loading,
-  // loadingSocialAuth,
-  error,
-  // otpRequestedAgain,
-  // successGuestLogin,
-  success,
-  sendOtpSuccess,
-  getProviderCategories,
-}
+
 
 enum AuthCurrentScreenFlow {
   selectType,
   login,
-  registerPatient,
-  registerProvider,
+  register,
   selectProviderCategories,
   sendotp,
   verifyphoneNumber,
   forgotPassword,
   enteringOTP,
-  // signupProviderData,
   logout,
   resetPassword,
-  getTerms,
-  getdiscalamir,
 }

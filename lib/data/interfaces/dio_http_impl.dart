@@ -99,7 +99,7 @@ class DioHttpImpl extends HttpDataSource {
       OnTryFuture onTry, DioException error) async {
     String message = '';
     if (error.response?.data != null) {
-      message = error.response!.data['message'].toString().replaceAll('_', ' ');
+      message = error.response!.data['error'].toString().replaceAll('_', ' ');
       return Left(Failure(message, error.message ?? ''));
     }
     if (error.type == DioExceptionType.connectionTimeout ||

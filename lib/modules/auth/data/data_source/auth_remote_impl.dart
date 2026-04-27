@@ -33,8 +33,13 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     required String fcmToken,
   }) async {
     final result = await httpInterface.post(
-        url: EndPoints.signup,
-        data: {...registerFormDto.toJson(), 'fcmToken': fcmToken});
+      url: EndPoints.signup,
+      data: {
+        ...registerFormDto.toJson(),
+
+        // 'fcmToken': fcmToken,
+      },
+    );
 
     return result.fold((r) => r, (r) {
       return r;
@@ -59,21 +64,26 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
       onCatch: (err) {
         DioException error = err as DioException;
         if (error.response == null) {
-          return Left<Failure, ResponseAdapter>(Failure(
-              errorMessages['ERR_NETWORK'], errorMessages['ERR_NETWORK']));
+          return Left<Failure, ResponseAdapter>(
+            Failure(errorMessages['ERR_NETWORK'], errorMessages['ERR_NETWORK']),
+          );
         } else if (error.response!.data is Map) {
-          final message =
-              (error.response?.data['message'] as String).replaceAll('_', ' ');
+          final message = (error.response?.data['error'] as String).replaceAll(
+            '_',
+            ' ',
+          );
           // .map((e) => (e['constraints'] as Map).values.join('\n'))
           // .join('\n');
           return Left<Failure, ResponseAdapter>(Failure(message, message));
         } else if (error.response!.data is String &&
             (error.response!.data as String).isNotEmpty) {
           return Left<Failure, ResponseAdapter>(
-              Failure(error.response!.data, error.response!.data));
+            Failure(error.response!.data, error.response!.data),
+          );
         } else if (error.response!.isRedirect) {
           return Left<Failure, ResponseAdapter>(
-              Failure('error Redirected', 'error Redirected'));
+            Failure('error Redirected', 'error Redirected'),
+          );
         } else {
           return Left<Failure, ResponseAdapter>(Failure('error', 'error'));
         }
@@ -89,16 +99,20 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
   @override
   Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp) async {
-    final result = await httpInterface
-        .post(url: EndPoints.verifyPhone, data: {'code': otp});
+    final result = await httpInterface.post(
+      url: EndPoints.verifyPhone,
+      data: {'code': otp},
+    );
 
     return result;
   }
 
   @override
   Future<Option<Failure, DateTime>> sendCode(String type, String number) async {
-    final result = await httpInterface
-        .post(url: EndPoints.sendOTPCode, data: {'type': type, type: number});
+    final result = await httpInterface.post(
+      url: EndPoints.sendOTPCode,
+      data: {'type': type, type: number},
+    );
     return result.fold((e) => e, (r) {
       log(r.data.toString());
       final String? code = r.data['debugData']['code'];
@@ -109,37 +123,47 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
           isError: false,
         );
       }
-      return DateTime.parse(r.data['data']['nextAllowedAt'] as String)
-          .toLocal();
+      return DateTime.parse(
+        r.data['data']['nextAllowedAt'] as String,
+      ).toLocal();
     });
   }
 
   @override
   Future<Option<Failure, ResponseAdapter>> forgotPassword(
-      String type, String number) async {
+    String type,
+    String number,
+  ) async {
     final result = await httpInterface.post(
-        url: EndPoints.forgotPassword, data: {'type': type, type: number});
+      url: EndPoints.forgotPassword,
+      data: {'type': type, type: number},
+    );
     return result;
   }
 
   @override
   Future<Option<Failure, ResponseAdapter>> passwordReset(
-      String code, String newPassword) async {
+    String code,
+    String newPassword,
+  ) async {
     final result = await httpInterface.post(
-        url: EndPoints.passwordReset,
-        data: {'token': code, 'newPassword': newPassword});
+      url: EndPoints.passwordReset,
+      data: {'token': code, 'newPassword': newPassword},
+    );
 
     return result;
   }
 
   @override
   Future<Option<Failure, ResponseAdapter>> logout(String fcmToken) async {
-    final refreshToken =
-        di<UserLocalDataSource>().returnAuthToken()?.refreshToken;
+    final refreshToken = di<UserLocalDataSource>()
+        .returnAuthToken()
+        ?.refreshToken;
     if (refreshToken != null) {
       final result = await httpInterface.post(
-          url: EndPoints.logout,
-          data: {'fcmToken': fcmToken, 'refreshToken': refreshToken});
+        url: EndPoints.logout,
+        data: {'fcmToken': fcmToken, 'refreshToken': refreshToken},
+      );
       return result.fold((l) => l, (r) {
         httpInterface.deleteToken();
         return r;
@@ -149,28 +173,22 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
     }
   }
 
-  @override
-  Future<Option<Failure, ResponseAdapter>> acceptTerms() async {
-    final result = await httpInterface.post(url: EndPoints.acceptTerms);
+  // @override
+  // Future<Option<Failure, ResponseAdapter>> acceptTerms() async {
+  //   final result = await httpInterface.post(url: EndPoints.acceptTerms);
 
-    return result;
-  }
+  //   return result;
+  // }
 
-  @override
-  Future<Option<Failure, ResponseAdapter>> acceptDisclaimer() async {
-    final result = await httpInterface.post(url: EndPoints.acceptDisclaimer);
-    return result;
-  }
-
-
-
-
+  // @override
+  // Future<Option<Failure, ResponseAdapter>> acceptDisclaimer() async {
+  //   final result = await httpInterface.post(url: EndPoints.acceptDisclaimer);
+  //   return result;
+  // }
 
   @override
   Future<Option<Failure, ResponseAdapter>> providerCategories() async {
-    final result = await httpInterface.get(
-      url: EndPoints.providerCategories,
-    );
+    final result = await httpInterface.get(url: EndPoints.providerCategories);
 
     return result;
   }
@@ -182,10 +200,7 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
   }) async {
     final result = await httpInterface.get(
       url: EndPoints.providerSpecialties,
-      queryParameters: {
-        'categoryId': ?categoryId,
-        'search': ?search,
-      },
+      queryParameters: {'categoryId': ?categoryId, 'search': ?search},
     );
 
     return result;
@@ -193,18 +208,14 @@ class AuthRemoteDataSourceImpl extends AuthRemoteDataSource {
 
   @override
   Future<Option<Failure, ResponseAdapter>> getDisclaimer() async {
-    final result = await httpInterface.get(
-      url: EndPoints.providerSpecialties,
-    );
+    final result = await httpInterface.get(url: EndPoints.providerSpecialties);
 
     return result;
   }
 
   @override
   Future<Option<Failure, ResponseAdapter>> getTerms() async {
-    final result = await httpInterface.get(
-      url: EndPoints.providerSpecialties,
-    );
+    final result = await httpInterface.get(url: EndPoints.providerSpecialties);
 
     return result;
   }

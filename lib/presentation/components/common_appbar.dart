@@ -49,9 +49,7 @@ class CommonAppbar extends StatelessWidget implements PreferredSizeWidget {
         title: Text(
           title,
           maxLines: 2,
-          style: boldFont
-              ? TextStylesManager.black.black24wBold
-              : TextStylesManager.black.black18w500,
+          style: TextStylesManager.redk16w500,
           textAlign: TextAlign.start,
           overflow: TextOverflow.ellipsis,
         ),

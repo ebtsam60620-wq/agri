@@ -1,6 +1,15 @@
 import 'package:agri/core/configs/colors_manager.dart';
 import 'package:flutter/material.dart';
 
+enum MyButtonStyle {
+  solid(ColorsManager.secondary, ColorsManager.white),
+  liner(ColorsManager.white, ColorsManager.secondary);
+
+  const MyButtonStyle(this.bg, this.border);
+  final Color border;
+  final Color bg;
+}
+
 class MyButton extends StatelessWidget {
   final VoidCallback? onPressed;
   final Widget childWidget;
@@ -14,6 +23,7 @@ class MyButton extends StatelessWidget {
   final double? fontSize;
   final double? radius;
   final IconData? icon;
+  final MyButtonStyle? style;
   final bool expandWidth;
   final List<Color>? gradientColors;
   final List<BoxShadow>? boxShadow;
@@ -34,10 +44,13 @@ class MyButton extends StatelessWidget {
     super.key,
     this.borderWidth,
     this.boxShadow,
+    this.style,
   });
 
   @override
   Widget build(BuildContext context) {
+    final Color? color = style?.bg ?? this.color;
+    final Color? borderColor = style?.border ?? this.borderColor;
     return GestureDetector(
       onTap: onPressed,
       child: AnimatedContainer(
@@ -61,7 +74,7 @@ class MyButton extends StatelessWidget {
           //       )
           //     : null,
           boxShadow: boxShadow,
-          borderRadius: BorderRadius.circular(radius == null ? 13 : radius!),
+          borderRadius: BorderRadius.circular(radius == null ? 500 : radius!),
         ),
         child: Center(child: childWidget),
       ),

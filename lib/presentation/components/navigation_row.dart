@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:agri/core/configs/colors_manager.dart';
 import 'package:agri/presentation/components/my_button.dart';
-import 'package:agri/presentation/textstyles.dart';
 
 class NavigationRow extends StatelessWidget {
   const NavigationRow({
@@ -17,7 +16,7 @@ class NavigationRow extends StatelessWidget {
     this.onOptions,
     this.prevTextStyle,
     this.prevColor = ColorsManager.textWhite,
-    this.prevTextColor = ColorsManager.greyB0B0B0,
+    this.prevTextColor = ColorsManager.grey,
   });
 
   final String? prevTitle;
@@ -60,7 +59,7 @@ class NavigationRow extends StatelessWidget {
                       style:
                           prevTextStyle ??
                           const TextStyle(
-                            color: ColorsManager.greyB0B0B0,
+                            color: ColorsManager.grey,
                             fontWeight: FontWeight.bold,
                           ),
                     ),
@@ -84,7 +83,6 @@ class NavigationRow extends StatelessWidget {
                   if (nextTitle != null)
                     Text(
                       nextTitle!,
-                      style: TextStylesManager.white.white18w800,
                     ),
                   if (nextIcon != null) ...[
                     const SizedBox(width: 8),

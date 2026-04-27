@@ -40,8 +40,8 @@ abstract class AuthRemoteDataSource {
       String code, String newPassword);
 
   Future<Option<Failure, dynamic>> logout(String fcmToken);
-  Future<Option<Failure, dynamic>> acceptTerms();
-  Future<Option<Failure, dynamic>> acceptDisclaimer();
+  // Future<Option<Failure, dynamic>> acceptTerms();
+  // Future<Option<Failure, dynamic>> acceptDisclaimer();
 
   // Future<Option<Failure, B>> deleteAccount();
 

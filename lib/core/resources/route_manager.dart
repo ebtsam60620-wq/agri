@@ -1,13 +1,17 @@
 import 'dart:developer';
 
 import 'package:agri/core/infrastructure/di.dart';
-import 'package:agri/core/utils/account_status_enum.dart';
-import 'package:agri/core/utils/user_type_enum.dart';
 import 'package:agri/data/data_sources/user_local_data_source.dart';
 import 'package:agri/data/models/user.dart';
-import 'package:agri/modules/auth/presentation/screens/login.dart';
-import 'package:agri/modules/onboarding_screen/presentation/onboarding_screen.dart';
+import 'package:agri/modules/auth/presentation/screens/forget_password.dart';
+import 'package:agri/modules/auth/presentation/screens/login_screen.dart';
+import 'package:agri/modules/auth/presentation/screens/new_password_screen.dart';
+import 'package:agri/modules/auth/presentation/screens/otp_screen.dart';
+import 'package:agri/modules/auth/presentation/screens/signup_user_first_screen.dart';
+import 'package:agri/modules/auth/presentation/screens/welcome_screen.dart';
+import 'package:agri/modules/onboarding_screen/screens/onboarding_main.dart';
 import 'package:agri/modules/splash/presentation/splash_screen.dart';
+import 'package:agri/presentation/components/my_scafold.dart';
 import 'package:agri/presentation/components/my_snackbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -122,14 +126,8 @@ class RouteManager {
     // }
   }
 
-  static void firstScreen({
-    User? user,
-    UserTypeEnum? requestsrole,
-    bool goto = true,
-  }) async {
-    //TODO: error when user is provider and status is pending
+  static void firstScreen({User? user, bool goto = true}) async {
     user ??= di.get<UserLocalDataSource>().returnUser()!;
-
     void navigate(String route) {
       if (goto) {
         RouteManager.goTo(route);
@@ -138,102 +136,25 @@ class RouteManager {
       }
     }
 
-    if (requestsrole == UserTypeEnum.provider || user.isProvider) {
-      if ((user.firstRequestStatus == null)) {
-        navigate(RouteManager.signupProviderSecoundScreen);
-      } else if (user.phoneVerifiedAt == null) {
-        navigate(RouteManager.otp);
-      } else if (user.firstRequestStatus?.toLowerCase() ==
-          AccountStatusEnum.pending.name) {
-        // AuthSuccessDialog.show(navigatorKey.currentContext!);
-      } else if (user.firstRequestStatus?.toLowerCase() ==
-          AccountStatusEnum.approved.name) {
-        navigate(RouteManager.providerHomeScreen);
-      }
-    } else {
-      if ((user.patientDetailsComplete ?? false) == false) {
-        navigate(RouteManager.signupUserData);
-      } else if (user.phoneVerifiedAt == null) {
-        navigate(RouteManager.otp);
-      } else {
-        navigate(RouteManager.userHomeScreen);
-      }
-    }
+    navigate(RouteManager.splash);
   }
 
+  // splash
   static const String splash = '/';
-  static const String language = '/language';
+  static const String welcome = '/welcome';
+
+  //onboarding + Auth
   static const String onboarding = '/onboarding';
   static const String login = '/login';
   static const String forgotPassword = '/forgotPassword';
   static const String otp = '/otp';
-  static const String signupUserData = '/signupUserData';
-  static const String signUpUserFirstScreen = '/SignUpUserFirstScreen';
+  static const String signUpUser = '/SignUpUser';
   static const String createNewPassword = '/createNewPassword';
-  static const String selectUserType = '/selectUserType';
-  static const String signupUserMedicalDataScreen =
-      '/signupUserMedicalDataScreen';
 
   static const String terms = '/terms';
-  static const String signupProviderSelectMedicalType =
-      '/signupProviderSelectMedicalType';
-  static const String signupProviderFirstScreen = '/signupProviderFirstScreen';
-  static const String signupProviderSecoundScreen =
-      '/signupProviderSecoundScreen';
-  static const String signupProviderThirdScreen = '/signupProviderThirdScreen';
-  static const String disclaimer = '/disclaimer';
-  static const String providerHomeScreen = '/providerHomeScreen';
-  static const String userHomeScreen = '/userHomeScreen';
-  static const String userServiceScreen = '/userServiceScreen';
-  static const String userServiceSelectProvidor = '/userServiceSelectProvidor';
-  static const String userSeviceProvidorInfo = '/userSeviceProvidorInfo';
-  static const String userTrackingServiceScreen = '/userTrackingServiceScreen';
-  static const String userSubmitServiceScreen = '/userSubmitServiceScreen';
 
-  static const String userCalcScreen = '/userCalcScreen';
-  static const String userWaterScreen = '/userWaterScreen';
-  static const String userBMIScreen = '/userBMIScreen';
-  static const String userIBWScreen = '/userIBWScreen';
-  static const String userSpO2Screen = '/userSpO\u2082Screen';
 
-  static const String userServiceProviderReivews =
-      '/userServiceProviderReivews';
-  static const String userUserServiceHistoryScreen =
-      '/userUserServiceHistoryScreen';
-  static const String profileGeneralInformationScreen =
-      '/ProfileGeneralInformationScreen';
-  static const String profileChooseLanguageScreen =
-      '/ProfileChooseLanguageScreen';
-  static const String profileSavedProvidersScreen =
-      '/ProfileSavedProvidersScreen';
-  static const String profileSettingScreen = '/ProfileSettingScreen';
-  static const String profileSupportScreen = '/ProfileSupportScreen';
-  static const String profileAboutScreen = '/ProfileAboutScreen';
-  static const String profileUserDataScreen = '/ProfileUserDataScreen';
-  static const String profileUserDataImageScreen =
-      '/ProfileUserDataImageScreen';
-  static const String profileProviderDataImageScreen =
-      '/ProfileProviderDataImageScreen';
-  static const String profileProviderDataScreen = '/ProfileProviderDataScreen';
-  static const String addressScreen = '/AddressScreen';
-  static const String addressAddScreen = '/AddressAddScreen';
-  static const String addressEditScreen = '/AddressEditScreen';
-  static const String requestHistoryScreen = 'requestHistoryScreen';
-  static const String providerSubmitServiceScreen =
-      'ProviderSubmitServiceScreen';
-  static const String userDetailsScreen = 'UserDetailsScreen';
-  static const String chatScreen = '/chatScreen';
-
-  // static const String userCureentServiceScreen = '/userCureentServiceScreen';
-  static const String wallet = '/wallet';
-  static const String withdraw = '/withdraw';
-  static const String recentTransaction = '/resenttransactionscreen';
-  static const String notification = '/notification';
-  static const String chatsList = '/chatsList';
-  static const String serviceScreen = '/serviceScreen';
-  static const String addEditNewService = '/addEditNewService';
-  static const String roshetadetailsscreen = '/roshetadetailsscreen';
-  // static const String patientSessionDetailsPage = '/patientSessionDetailsPage';
+  static const String home = '/home';
 
   static DateTime? _firstPress;
   static Route<dynamic>? Function(RouteSettings)?
@@ -262,9 +183,7 @@ class RouteManager {
 
         return PopScope(
           canPop: canPop(context: context),
-          //||
-          //(_firstPress != null &&
-          //                    _firstPress!.difference(DateTime.now()).inSeconds < 5)
+
           onPopInvokedWithResult: (didPop, result) async {
             final canp = canPop(context: context);
             final secounds = _firstPress?.difference(DateTime.now()).inSeconds;
@@ -274,36 +193,26 @@ class RouteManager {
             } else {
               if (!canp) {
                 _firstPress = DateTime.now();
-                mySnackBar(
-                  "AppLocalizations.of(context).pressAgainToCloseApp",
-                  context,
-                  isError: false,
-                );
+                mySnackBar("pressAgainToCloseApp", context, isError: false);
               }
             }
           },
-          child:
-              switch (settings.name) {
-                    splash => const SplashScreen(),
-                    onboarding => const OnboardingScreen(),
-                    login => const LoginScreen(),
-                    _ => const SplashScreen(),
-                  }
-                  as Widget,
+          child: switch (settings.name) {
+            // Start and Auth
+            splash => const SplashScreen(),
+            welcome => const WelcomeScreen(),
+            onboarding => const OnboardingMainScreen(),
+            login => const LoginScreen(),
+            forgotPassword => const ForgetPasswordScreen(),
+            otp => const OtpVerificationScreen(),
+            createNewPassword => const NewPasswordScreen(),
+            signUpUser => const SignUpUserFirstScreen(),
+            home=> const MyScafold(),
+            _ => const SplashScreen(),
+          },
         );
       },
     );
-    //   if (Platform.isAndroid) {
-    //     return MaterialPageRoute(
-    //       settings: settings,
-    //       builder: globalRoutes[settings.name]!,
-    //     );
-    //   } else {
-    //     return CupertinoPageRoute(
-    //       settings: settings,
-    //       builder: globalRoutes[settings.name]!,
-    //     );
-    //   }
   };
 }
 

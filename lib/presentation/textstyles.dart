@@ -8,11 +8,6 @@ class TextStylesManager {
     color: ColorsManager.textWhite,
   );
 
-  static const TextStyle deleteBtn = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w500,
-    color: ColorsManager.darkrose,
-  );
 
   static const TextStyle textField = TextStyle(
     fontSize: 16,
@@ -31,46 +26,8 @@ class TextStylesManager {
     fontWeight: FontWeight.w400,
     color: ColorsManager.textGrey,
   );
-  static const TextStyle lightBlack16w600 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w600,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle grey7D7D7D20w500 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w500,
-    color: ColorsManager.grey7D7D7D,
-  );
-  static const TextStyle lightBlack16w700 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w700,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle lightBlack18w700 = TextStyle(
-    fontSize: 18,
-    fontWeight: FontWeight.w700,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle lightBlack24w700 = TextStyle(
-    fontSize: 24,
-    fontWeight: FontWeight.w700,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle lightBlack20w900 = TextStyle(
-    fontSize: 20,
-    fontWeight: FontWeight.w900,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle lightBlack16w400 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w400,
-    color: ColorsManager.lightblack,
-  );
-  static const TextStyle lightBlack16w200 = TextStyle(
-    fontSize: 16,
-    fontWeight: FontWeight.w200,
-    color: ColorsManager.lightblack,
-  );
+
+
   static const TextStyle redk16w500 = TextStyle(
     fontSize: 16,
     fontWeight: FontWeight.w500,
@@ -82,21 +39,11 @@ class TextStylesManager {
   static const BlueTextStyles blue = BlueTextStyles();
   static const YellowTextStyles yellow = YellowTextStyles();
   static const GreenTextStyles green = GreenTextStyles();
-  static const RedTextStyles red = RedTextStyles();
 }
 
 class YellowTextStyles {
   const YellowTextStyles();
-  TextStyle get yellow12w500 => const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w500,
-        color: ColorsManager.iconYellow,
-      );
-  TextStyle get yellow12w700 => const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.iconYellow,
-      );
+
 }
 
 class BlackTextStyles {
@@ -167,31 +114,13 @@ class BlackTextStyles {
         fontWeight: FontWeight.w700,
         color: ColorsManager.textBlack,
       );
-  TextStyle get blacklightblack16w700 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.lightblack,
-      );
-  TextStyle get blacklightblack20w700 => const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.lightblack,
-      );
+
   TextStyle get black16w800 => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w800,
         color: ColorsManager.textBlack,
       );
-  TextStyle get lightblack16w600 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: ColorsManager.lightblack,
-      );
-  TextStyle get lightblack16w400 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.lightblack,
-      );
+
   TextStyle get black16w400 => const TextStyle(
         fontSize: 16,
         fontWeight: FontWeight.w400,
@@ -351,36 +280,7 @@ class GreyTextStyles {
         fontWeight: FontWeight.w400,
         color: ColorsManager.textGrey,
       );
-  TextStyle get grey12w400 => const TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.textGreyAlone,
-      );
-  TextStyle get grey15w500 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w500,
-        color: ColorsManager.textGreyAlone,
-      );
-  TextStyle get grey15w400 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.textGreyAlone,
-      );
-  TextStyle get greyAAAAAA15w400 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.greyAAAAAA,
-      );
-  TextStyle get grey15w600 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w600,
-        color: ColorsManager.textGreyAlone,
-      );
-  TextStyle get grey20w600 => const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w600,
-        color: ColorsManager.textGreyAlone,
-      );
+
   TextStyle get regularTitle => const TextStyle(
         fontSize: 20,
         fontWeight: FontWeight.w500,
@@ -391,11 +291,7 @@ class GreyTextStyles {
         fontWeight: FontWeight.w400,
         color: ColorsManager.textMainGrey,
       );
-  TextStyle get greyADADAD16W600 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: ColorsManager.greyADADAD,
-      );
+
   TextStyle get grey12W400 => const TextStyle(
         fontSize: 12,
         fontWeight: FontWeight.w400,
@@ -406,21 +302,8 @@ class GreyTextStyles {
         fontWeight: FontWeight.w400,
         color: ColorsManager.grey,
       );
-  TextStyle get grey9C9C9C14W400 => const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.grey9C9C9C,
-      );
-  TextStyle get grey5B5B5B14W400 => const TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.grey5B5B5B,
-      );
-  TextStyle get greyB4B4B435W400 => const TextStyle(
-        fontSize: 35,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.greyB4B4B4,
-      );
+
+
   TextStyle get textHintGrey32W400 => const TextStyle(
         fontSize: 32,
         fontWeight: FontWeight.w400,
@@ -563,38 +446,8 @@ class BlueTextStyles {
 
 class GreenTextStyles {
   const GreenTextStyles();
-  TextStyle get green16B36415w700 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.green16B364,
-      );
-  TextStyle get green13A70016w600 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: ColorsManager.green13A700,
-      );
-}
 
-class RedTextStyles {
-  const RedTextStyles();
-  TextStyle get redFF5F5F15w700 => const TextStyle(
-        fontSize: 15,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.redFF5F5F,
-      );
-  TextStyle get redEA382E20w700 => const TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.redEA382E,
-      );
-  TextStyle get darkrose16w700 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w700,
-        color: ColorsManager.darkrose,
-      );
-  TextStyle get roseFF626216w400 => const TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w400,
-        color: ColorsManager.roseFF6262,
-      );
+
+
+
 }

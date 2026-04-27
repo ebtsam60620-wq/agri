@@ -78,7 +78,7 @@ class MyDropDownTextField<T> extends StatelessWidget {
                       size: 25,
                     ),
               hint: hintText != null
-                  ? Text(hintText!, style: TextStylesManager.grey.grey15W400)
+                  ? Text(hintText!, style: TextStylesManager.textField)
                   : null,
               style: TextStylesManager.textField,
               decoration: InputDecoration(

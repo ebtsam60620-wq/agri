@@ -1,4 +1,6 @@
 
+// ignore_for_file: strict_top_level_inference
+
 import 'package:agri/data/models/failure.dart';
 
 class Option<L, R> {
@@ -52,7 +54,7 @@ class Option<L, R> {
 }
 
 class Right<L, R> extends Option<L, R> {
-  Right(right) : super(right: right);
+  Right( right) : super(right: right);
 }
 
 class Left<L, R> extends Option<L, R> {

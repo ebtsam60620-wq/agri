@@ -1,22 +1,20 @@
 class EndPoints {
   // Base URLs
-  static const String baseURL = 'http://75.119.138.130:3000/api/v1';
-  static const String webSocketBaseURL = 'ws://75.119.138.130:3000/';
+  static const String baseURL = 'https://asklany-agari-backend.hf.space/v1';
+  static const String webSocketBaseURL = 'https://asklany-agari-backend.hf.space/';
   static const String uploads = '/upload';
   // Auth
-  static const String login = '/auth/login';
   static const String signup = '/auth/register';
-  static const String acceptTerms = '/auth/accept-terms';
-  static const String acceptDisclaimer = '/auth/accept-disclaimer';
-  static const String updateToken = '/auth/refresh';
+  static const String login = '/auth/login';
+  
+  static const String sendOTPCode = '/auth/resend-otp';
+  static const String verifyPhone = '/auth/resend-otp';
+
   static const String forgotPassword = '/auth/forgot-password';
-  static const String confirmResetPassword = '';
-  static const String sendOTPCode = '/auth/send-verification-code';
-  static const String resendOTPCode = '';
-  static const String verifyEmail = '';
-  static const String verifyPhone = '/auth/verify-phone';
-  static const String otp2FA = '';
   static const String passwordReset = '/auth/reset-password';
+
+  static const String updateToken = '/auth/refresh';
+  
   static const String logout = '/auth/logout';
   static const String getme = '/auth/me';
   static const String getPatient = '/patient';

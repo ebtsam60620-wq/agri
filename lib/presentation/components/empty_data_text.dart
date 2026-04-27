@@ -12,7 +12,7 @@ class EmptyDataText extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStylesManager.black.black24wBold,
+        style: TextStylesManager.inactiveNavBar,
       ),
     );
     if (onRefresh == null) {

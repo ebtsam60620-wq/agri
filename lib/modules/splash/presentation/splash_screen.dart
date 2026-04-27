@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'package:agri/core/configs/colors_manager.dart';
 import 'package:agri/core/infrastructure/di.dart';
 import 'package:agri/core/resources/assets.dart';
 import 'package:agri/core/resources/route_manager.dart';
@@ -19,7 +18,6 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: ColorsManager.scaffoldBlueBgColor,
       body: Stack(
         alignment: Alignment.center,
         children: [
@@ -109,7 +107,7 @@ class AnimatedLogoSplashState extends ConsumerState<AnimatedLogoSplash> {
         children: [
           Center(
             child: SvgPicture.asset(
-              Assets.splashLogo,
+              Assets.svgLogoWhiteS,
               height: widget.isTablet ? widget.width * 0.5 : widget.width * 0.4,
               fit: BoxFit.cover,
             ),
@@ -118,13 +116,13 @@ class AnimatedLogoSplashState extends ConsumerState<AnimatedLogoSplash> {
             textDirection: TextDirection.ltr,
             bottom: 0,
             start: 0,
-            child: SvgPicture.asset(Assets.splashLogo2),
+            child: SvgPicture.asset(Assets.svgLogoWhiteS),
           ),
           Positioned.directional(
             textDirection: TextDirection.ltr,
             end: 0,
             bottom: widget.isTablet ? widget.width * 0.1 : widget.width * 0.15,
-            child: SvgPicture.asset(Assets.splashHand, fit: BoxFit.cover),
+            child: SvgPicture.asset(Assets.svgLogoWhiteS, fit: BoxFit.cover),
           ),
         ],
       ),

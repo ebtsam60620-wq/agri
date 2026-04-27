@@ -1,3 +1,7 @@
+import 'package:agri/core/configs/my_flutter_app_icons.dart';
+import 'package:agri/modules/home/presentation/screens/home_screen.dart';
+import 'package:agri/presentation/app_size_config.dart';
+import 'package:agri/presentation/components/custom_nav_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
@@ -11,57 +15,68 @@ enum HomePages {
     activeIcon: IconsaxPlusBold.home_2,
     inactiveIcon: IconsaxPlusLinear.home_2,
   ),
-  requsets(
-    activeIcon: IconsaxPlusBold.document_text_1,
-    inactiveIcon: IconsaxPlusLinear.document_text,
+  cropCycle(
+    activeIcon: IconsaxPlusBold.additem,
+    inactiveIcon: IconsaxPlusLinear.additem,
   ),
-  wallet(
-    activeIcon: IconsaxPlusBold.empty_wallet,
-    inactiveIcon: IconsaxPlusLinear.empty_wallet,
+  scan(activeIcon: IconsaxPlusBold.scan, inactiveIcon: IconsaxPlusLinear.scan),
+  sensors(
+    activeIcon: MyFlutterAppIcons.carbonTempreture,
+    inactiveIcon: MyFlutterAppIcons.carbonTempreture,
   ),
-  profile(
-    activeIcon: IconsaxPlusBold.profile,
-    inactiveIcon: IconsaxPlusLinear.profile,
+  settings(
+    activeIcon: IconsaxPlusBold.setting,
+    inactiveIcon: IconsaxPlusLinear.setting,
   );
 
   final IconData activeIcon;
   final IconData inactiveIcon;
 
   const HomePages({required this.activeIcon, required this.inactiveIcon});
-
-  String get title {
-    // final apploc = getappLoc();
-    switch (this) {
-      case HomePages.home:
-        return 'home';
-      case HomePages.requsets:
-        return 'requests';
-      case HomePages.wallet:
-        return 'wallet';
-      case HomePages.profile:
-        return 'profile';
-    }
-  }
 }
 
 class MyScafold extends HookConsumerWidget {
-  const MyScafold({super.key, required this.screens});
-  final List<Widget> screens;
+  const MyScafold({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final page = ref.watch(layoutProvider);
     final notifier = ref.read(layoutProvider.notifier);
-
     return Scaffold(
-      backgroundColor: ColorsManager.primary,
-      body: LazyLoadIndexedStack(index: page.index, children: screens),
-      // bottomNavigationBar: CustomBottomNavBar(
-      //   currentIndex: page.index,
-      //   onTap: (int e) {
-      //     notifier.state = HomePages.values[e];
-      //   },
-      // ),
+      backgroundColor: ColorsManager.scaffoldBgColor,
+      body: Stack(
+        children: [
+          Padding(
+            padding: EdgeInsets.only(
+              top: AppSizeConfig().topViewPadding + 20,
+              right: 15,
+              left: 15,
+            ),
+            child: LazyLoadIndexedStack(
+              index: page.index,
+              children: [
+                HomeScreen(),
+                Container(),
+                Container(),
+                Container(),
+                Container(),
+              ],
+            ),
+          ),
+          Align(
+            alignment: AlignmentGeometry.bottomCenter,
+            child: SizedBox(
+              height: 100,
+              child: CustomBottomNavBar(
+                currentIndex: page,
+                onTap: (HomePages e) {
+                  notifier.state = e;
+                },
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

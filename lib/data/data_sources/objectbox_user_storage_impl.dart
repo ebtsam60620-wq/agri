@@ -2,7 +2,6 @@ import 'package:agri/data/data_sources/user_local_data_source.dart';
 import 'package:agri/data/models/user.dart';
 import 'package:agri/modules/auth/data/models/auth_token.dart';
 import 'package:injectable/injectable.dart';
-import 'package:objectbox/objectbox.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'objectbox.g.dart';

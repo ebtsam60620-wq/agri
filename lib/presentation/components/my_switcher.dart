@@ -40,7 +40,7 @@ class MySwitcher extends StatelessWidget {
             decoration: BoxDecoration(
               color: value
                   ? activeColor ?? ColorsManager.primary
-                  : inactiveColor ?? ColorsManager.greyE0E0E0,
+                  : inactiveColor ?? ColorsManager.grey,
               borderRadius: BorderRadius.circular(borderRadius),
             ),
             alignment: value ? Alignment.centerRight : Alignment.centerLeft,

@@ -36,19 +36,15 @@ class AuthRepositoryImpl extends AuthRepo {
         .then(
           (e) => e.fold((left) => left, (right) {
             final token = ModelParser.parse(
-              () => AuthToken.fromJson(right.data['data']),
-            );
+              () => AuthToken.fromJson(right.data['user']),
+            ); 
             remoteDataSource.saveToken(token.token);
             final user = ModelParser.parse(
-              () => User.fromJson(
-                right.data['data']['user'],
-                isProvider: registerFormDto.userRole == UserTypeEnum.provider,
-              ),
+              () => User.fromJson(right.data['data']['user']),
             );
-            if (!user.isProvider) {
-              localDataSource.saveToken(token);
-              saveUser(user);
-            }
+            localDataSource.saveToken(token);
+            saveUser(user);
+
             return user;
           }),
         );
@@ -75,7 +71,7 @@ class AuthRepositoryImpl extends AuthRepo {
       // saveUser(user);
       saveUser(
         di.get<UserLocalDataSource>().returnUser()!.copyWith(
-          phoneVerifiedAt: DateTime.now(),
+          isVerified:true,
         ),
       );
       return right;
@@ -102,19 +98,12 @@ class AuthRepositoryImpl extends AuthRepo {
       final user = ModelParser.parse(
         () => User.fromJson(
           right.data['data']['user'],
-          isProvider: userType == UserTypeEnum.provider,
         ),
       );
-      if (user.isProvider &&
-          user.firstRequestStatus?.toLowerCase() ==
-              AccountStatusEnum.approved.name) {
+    
         localDataSource.saveToken(token);
         saveUser(user);
-      } else if (!user.isProvider) {
-        // Patient
-        localDataSource.saveToken(token);
-        saveUser(user);
-      }
+      
       return user;
     });
   }
@@ -144,29 +133,29 @@ class AuthRepositoryImpl extends AuthRepo {
     localDataSource.logOut();
   }
 
-  @override
-  Future<Option<Failure, dynamic>> acceptTerms(bool isProvider) async {
-    final res = await remoteDataSource.acceptTerms();
-    return res.fold((left) => left, (right) {
-      final user = ModelParser.parse(
-        () => User.fromJson(right.data['data'], isProvider: isProvider),
-      );
-      saveUser(user);
-      return right;
-    });
-  }
+  // @override
+  // Future<Option<Failure, dynamic>> acceptTerms(bool isProvider) async {
+  //   final res = await remoteDataSource.acceptTerms();
+  //   return res.fold((left) => left, (right) {
+  //     final user = ModelParser.parse(
+  //       () => User.fromJson(right.data['data'], isProvider: isProvider),
+  //     );
+  //     saveUser(user);
+  //     return right;
+  //   });
+  // }
 
-  @override
-  Future<Option<Failure, dynamic>> acceptDisclaimer(bool isProvider) async {
-    final res = await remoteDataSource.acceptDisclaimer();
-    return res.fold((left) => left, (right) {
-      final user = ModelParser.parse(
-        () => User.fromJson(right.data['data'], isProvider: isProvider),
-      );
-      saveUser(user);
-      return right;
-    });
-  }
+  // @override
+  // Future<Option<Failure, dynamic>> acceptDisclaimer(bool isProvider) async {
+  //   final res = await remoteDataSource.acceptDisclaimer();
+  //   return res.fold((left) => left, (right) {
+  //     final user = ModelParser.parse(
+  //       () => User.fromJson(right.data['data'], isProvider: isProvider),
+  //     );
+  //     saveUser(user);
+  //     return right;
+  //   });
+  // }
 
   //TODO: Change to content Only
   @override

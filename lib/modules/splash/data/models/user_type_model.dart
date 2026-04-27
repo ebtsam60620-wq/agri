@@ -57,14 +57,14 @@
 //           BuildContext context, ValueNotifier<UserTypeModel?> notifier) =>
 //       [
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).doctors,
+//           title: doctors,
 //           color: ColorsManager.primary,
 //           imagePath: Assets.doctor,
 //           userType: UserTypeEnum.provider,
 //           isSelected: notifier,
 //         ),
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).nurses,
+//           title: nurses,
 //           color: ColorsManager.primary,
 //           imagePath: Assets.nurse,
 //           userType: UserTypeEnum.provider,
@@ -72,14 +72,14 @@
 //           isRight: false,
 //         ),
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).lab_specialist,
+//           title: lab_specialist,
 //           color: ColorsManager.redFF6565,
 //           imagePath: Assets.labSpecialist,
 //           userType: UserTypeEnum.provider,
 //           isSelected: notifier,
 //         ),
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).radiology_specialist,
+//           title: radiology_specialist,
 //           color: ColorsManager.blue000B41,
 //           imagePath: Assets.radiology,
 //           userType: UserTypeEnum.provider,
@@ -92,7 +92,7 @@
 //           BuildContext context, ValueNotifier<UserTypeModel?> notifier) =>
 //       [
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).health_guest,
+//           title: health_guest,
 //           color: ColorsManager.redFF6565,
 //           imagePath: Assets.family,
 //           userType: UserTypeEnum.patient,
@@ -100,7 +100,7 @@
 //           isRight: false,
 //         ),
 //         UserTypeModel(
-//           title: AppLocalizations.of(context).health_host,
+//           title: health_host,
 //           color: ColorsManager.primary,
 //           imagePath: Assets.doctor,
 //           userType: UserTypeEnum.provider,

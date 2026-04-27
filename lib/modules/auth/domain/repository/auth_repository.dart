@@ -58,8 +58,8 @@ abstract class AuthRepo {
   void saveUser(User user);
 
   void logout(bool doLogoutRequest);
-  Future<Option<Failure, dynamic>> acceptTerms(bool isProvider);
-  Future<Option<Failure, dynamic>> acceptDisclaimer(bool isProvider);
+  // Future<Option<Failure, dynamic>> acceptTerms(bool isProvider);
+  // Future<Option<Failure, dynamic>> acceptDisclaimer(bool isProvider);
 
   // Future<Option<Failure, bool>> deleteAccount();
 

@@ -1,94 +1,63 @@
 
 
-import 'package:agri/core/infrastructure/di.dart';
-import 'package:agri/core/utils/gender_enum.dart';
-import 'package:agri/core/utils/user_type_enum.dart';
-import 'package:agri/data/data_sources/user_local_data_source.dart';
-
 class RegisterFormDto {
+  String fullName;
+  String phone;
   String email;
   String password;
-  String firstName;
-  String lastName;
-  String phone;
-  UserTypeEnum userRole;
-  ProviderCategoryModel? type;
-  String? fullNameOnId;
-  String? nationalId;
-  DateTime birthDate; // Format: "YYYY-MM-DD"
-  Gender gender;
+  bool acceptedTerms;
 
   RegisterFormDto({
+    required this.fullName,
+    required this.phone,
     required this.email,
     required this.password,
-    required this.firstName,
-    required this.lastName,
-    required this.phone,
-    required this.userRole,
-    this.type,
-    this.fullNameOnId,
-    this.nationalId,
-    required this.birthDate,
-    required this.gender,
+    required this.acceptedTerms,
   });
 
   Map<String, dynamic> toJson() {
     return {
+      'full_name': fullName,
+      'phone': phone,
       'email': email,
       'password': password,
-      'firstName': firstName,
-      'lastName': lastName,
-      'phone': '+2$phone',
-      'registerAs': userRole.backendvalue,
-      if (fullNameOnId != null) 'fullNameOnId': fullNameOnId,
-      if (nationalId != null) 'nationalId': nationalId,
-      'birthDate': '${birthDate.year}-${birthDate.month}-${birthDate.day}',
-      'gender': gender.name.toUpperCase(),
+      'accepted_terms': acceptedTerms,
+      'terms_version': 'v1',
     };
   }
 
-  Map<String, dynamic> toUpdateProfileJson() {
-    final userDto =
-        di.get<UserLocalDataSource>().returnUser()!;
+  // Map<String, dynamic> toUpdateProfileJson() {
+  //   final userDto = di.get<UserLocalDataSource>().returnUser()!;
 
-    return {
-      if (userDto.firstName != firstName) 'firstName': firstName,
-      if (userDto.lastName != lastName) 'lastName': lastName,
-      if (userDto.fullNameOnId != fullNameOnId)
-        'fullNameOnId': fullNameOnId ?? '',
-      if (userDto.nationalId != nationalId) 'nationalId': nationalId ?? '',
-      if (userDto.phone != phone) 'phone': phone,
-      if (userDto.email != email) 'email': email,
-      if (userDto.birthDate != birthDate)
-        'birthDate': birthDate.toIso8601String(),
-    };
+  //   return {
+  //     if (userDto.fullName != fullName) 'full_name': fullName,
+  //     if (userDto.phone != phone) 'phone': phone,
+  //     if (userDto.email != email) 'email': email,
+  //   };
+  // }
+
+  /// Optional: A validation method mirroring the Python schema validations
+  bool validate() {
+    if (fullName.length < 2 || fullName.length > 120) return false;
+    if (password.length < 8) return false;
+    if (!acceptedTerms) return false;
+    return true; // You can expand this to throw specific exceptions or return error strings
   }
 
   RegisterFormDto copyWith({
+    String? fullName,
+    String? phone,
     String? email,
     String? password,
-    String? firstName,
-    String? lastName,
-    String? phone,
-    UserTypeEnum? userRole,
-    ProviderCategoryModel? type,
-    String? fullNameOnId,
-    String? nationalId,
-    DateTime? birthDate,
-    Gender? gender,
+    bool? acceptedTerms,
+    String? termsVersion,
   }) {
     return RegisterFormDto(
+      fullName: fullName ?? this.fullName,
+      phone: phone ?? this.phone,
       email: email ?? this.email,
       password: password ?? this.password,
-      firstName: firstName ?? this.firstName,
-      lastName: lastName ?? this.lastName,
-      phone: phone ?? this.phone,
-      userRole: userRole ?? this.userRole,
-      type: type ?? this.type,
-      fullNameOnId: fullNameOnId ?? this.fullNameOnId,
-      nationalId: nationalId ?? this.nationalId,
-      birthDate: birthDate ?? this.birthDate,
-      gender: gender ?? this.gender,
+      acceptedTerms: acceptedTerms ?? this.acceptedTerms,
     );
   }
 
@@ -97,34 +66,19 @@ class RegisterFormDto {
     if (identical(this, other)) return true;
 
     return other is RegisterFormDto &&
+        other.fullName == fullName &&
+        other.phone == phone &&
         other.email == email &&
         other.password == password &&
-        other.firstName == firstName &&
-        other.lastName == lastName &&
-        other.phone == phone &&
-        other.userRole == userRole &&
-        other.type == type &&
-        other.fullNameOnId == fullNameOnId &&
-        other.nationalId == nationalId &&
-        other.birthDate == birthDate &&
-        other.gender == gender;
+        other.acceptedTerms == acceptedTerms;
   }
 
   @override
   int get hashCode {
-    return email.hashCode ^
-        password.hashCode ^
-        firstName.hashCode ^
-        lastName.hashCode ^
+    return fullName.hashCode ^
         phone.hashCode ^
-        userRole.hashCode ^
-        type.hashCode ^
-        fullNameOnId.hashCode ^
-        nationalId.hashCode ^
-        birthDate.hashCode ^
-        gender.hashCode;
+        email.hashCode ^
+        password.hashCode ^
+        acceptedTerms.hashCode;
   }
-}
-
-class ProviderCategoryModel {
 }

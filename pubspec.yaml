@@ -36,6 +36,7 @@ dependencies:
     sdk: flutter
   flutter_launcher_icons: ^0.14.3
   flutter_native_splash: ^2.4.7
+  pinput: ^6.0.2
 
 dev_dependencies:
   flutter_test:
@@ -48,8 +49,13 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   generate: true # Add this line here
+  fonts:
+  - family:  MyFlutterApp
+    fonts:
+      - asset: assets/fonts/MyFlutterApp.ttf
   assets:
     - assets/
+    - assets/images/
     - assets/svg/
     - assets/png/
 
@@ -61,11 +67,11 @@ flutter_native_splash:
   ios: false
   web: false
   color: "#ffffff" # Background color
-  image: assets\png\splash.png # Your splash image path
+  image: assets\png\app_splash.png # Your splash image path
   android_gravity: center
   # Configeration for The Splash screen for Android 12+
   android_12:
-    image: assets\png\splash.png # Background image for Android 12
+    image: assets\png\app_splash.png # Background image for Android 12
     color: "#ffffff" # Background color for Android 12
     # icon_background_color: "#0082FE" # Icon background color
     # android_gravity: fill # Stretch the image to fill the screen
@@ -80,5 +86,5 @@ flutter_native_splash:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: false
-  image_path: "assets/png/icon.png"
+  image_path: "assets/png/app_icon.png"
   # min_sdk_android: 21 # android min sdk min:16, default 21
