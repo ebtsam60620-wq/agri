@@ -1,90 +1,253 @@
+import 'package:agri/core/configs/colors_manager.dart';
+import 'package:agri/core/resources/assets.dart';
 import 'package:agri/core/resources/route_manager.dart';
 import 'package:agri/core/utils/extension_methods.dart';
+import 'package:agri/core/utils/request_enum.dart';
+import 'package:agri/generated/app_localizations.dart';
+import 'package:agri/modules/auth/presentation/controller/auth_notifier.dart';
 import 'package:agri/modules/auth/presentation/widgets/auth_scaffold.dart';
+import 'package:agri/modules/auth/presentation/widgets/auth_success_dialog.dart';
+import 'package:agri/notifiers.dart';
+import 'package:agri/presentation/components/loading_indicator.dart';
+import 'package:agri/presentation/components/my_button.dart';
+import 'package:agri/presentation/components/my_snackbar.dart';
+import 'package:agri/presentation/textstyles.dart';
 import 'package:flutter/material.dart';
-import 'package:agri/core/configs/colors_manager.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:pinput/pinput.dart';
-import 'package:agri/presentation/textstyles.dart';
 
-enum OtpFlow { reset, verifyPhone }
+enum OtpMethod { phone, email }
 
-class OtpVerificationScreen extends HookConsumerWidget {
+// 1. Clean Arguments Class
+class OtpScreenArgs {
+  final OtpMode mode;
+  final OtpMethod method;
+
+  const OtpScreenArgs({
+    this.mode = OtpMode.verfy,
+    this.method = OtpMethod.email,
+  });
+}
+
+enum OtpMode { verfy, passwordReset }
+
+// 2. Converted to ConsumerStatefulWidget
+class OtpVerificationScreen extends ConsumerStatefulWidget {
   const OtpVerificationScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final settings = context.getRouteSettings();
-    final otp = settings.arguments is OtpFlow
-        ? settings.arguments
-        : OtpFlow.verifyPhone;
-    return AuthScaffold(
-      onNext: () => RouteManager.goTo(
-        otp == OtpFlow.verifyPhone
-            ? RouteManager.home
-            : RouteManager.createNewPassword,
+  ConsumerState<OtpVerificationScreen> createState() =>
+      _OtpVerificationScreenState();
+}
+
+class _OtpVerificationScreenState extends ConsumerState<OtpVerificationScreen> {
+  late TextEditingController _otpController;
+  bool _isVerify = true;
+
+  OtpMethod method = OtpMethod.email;
+
+  @override
+  void initState() {
+    super.initState();
+    _otpController = TextEditingController();
+
+    // 3. Extract args and set state after the first frame renders
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeScreen();
+    });
+  }
+
+  void _initializeScreen() {
+    final args = context.getRouteSettings().arguments;
+    final authState = ref.read(authProvider);
+    final authNotifier = ref.read(authProvider.notifier);
+
+    // Safely parse arguments
+    if (args is OtpScreenArgs) {
+      _isVerify = args.mode == OtpMode.verfy;
+      method = args.method;
+    } else if (args is OtpMode) {
+      _isVerify = args == OtpMode.verfy;
+      method = authState.otpMethod; // Fallback to current state
+    }
+
+    // Set the OTP method globally in your AuthNotifier state
+    // authNotifier.setOtpMethod();
+
+    // Initial code request
+    if (_isVerify) {
+      authNotifier.sendCode(method);
+    } else if (authState.otpPhoneNumber != null &&
+        (!(authState.currentScreenFlow ==
+                AuthCurrentScreenFlow.forgotPassword &&
+            (authState.loadingState == Requestenum.success ||
+                authState.loadingState == Requestenum.loading)))) {
+      authNotifier.forgotPassword(method: method);
+    }
+    Future.microtask(() => setState(() {}));
+  }
+
+  @override
+  void dispose() {
+    _otpController.dispose();
+    super.dispose();
+  }
+
+  void _onBtnPressed() {
+    if (_otpController.text.length == 4) {
+      final authNotifier = ref.read(authProvider.notifier);
+      authNotifier.verifyPhone(_otpController.text);
+      // _isVerify
+      //     ? authNotifier.verifyPhone(_otpController.text)
+      //     : authNotifier.otpPasswordReset(_otpController.text);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final authState = ref.watch(authProvider);
+    final authNotifier = ref.read(authProvider.notifier);
+    final l10n = AppLocalizations.of(context);
+
+    // Navigation and UI side-effects
+    ref.listen(authProvider, (_, current) {
+      if (current.loadingState == Requestenum.success) {
+        switch (current.currentScreenFlow) {
+          case AuthCurrentScreenFlow.enteringOTP:
+            _otpController.text = current.otp?.code ?? '';
+            if (_otpController.text.isNotEmpty) {
+              // Auto-verify if the code was retrieved successfully
+              authNotifier.verifyPhone(_otpController.text);
+            }
+          case AuthCurrentScreenFlow.verifyPhone:
+            AuthSuccessDialog.show(context);
+            RouteManager.firstScreen(user: current.user, goto: false);
+          case AuthCurrentScreenFlow.checkotp:
+            RouteManager.goTo(RouteManager.createNewPassword);
+          default:
+            break;
+        }
+      }
+      if (current.loadingState == Requestenum.error &&
+          current.errorMessage != null &&
+          (current.currentScreenFlow == AuthCurrentScreenFlow.enteringOTP ||
+              current.currentScreenFlow == AuthCurrentScreenFlow.verifyPhone ||
+              current.currentScreenFlow == AuthCurrentScreenFlow.checkotp)) {
+        mySnackBar(current.errorMessage!, context);
+      }
+    });
+
+    final defaultPinTheme = PinTheme(
+      width: 56,
+      height: 56,
+      textStyle: const TextStyle(
+        fontSize: 28,
+        color: Colors.black87,
+        fontWeight: FontWeight.w600,
       ),
-      uiNext: 'Verify Code',
-      title: 'Enter Verification Code',
-      subTitle:
-          'Please enter code that we have sent to your\nemail AGRI3*******@gmail.com',
-      bottomSubTitle: 'I Don’t Receive Code!',
-      bottomSubEnd: 'Resend',
+      decoration: BoxDecoration(
+        color: ColorsManager.textWhite,
+        border: Border.all(color: Colors.grey.shade800),
+        borderRadius: BorderRadius.circular(16),
+      ),
+    );
+
+    // 4. Dynamic UI Labels based on the current OtpMethod
+    final String targetLabel = authState.otpMethod == OtpMethod.email
+        ? "Email" // Replace with l10n.email if you have it in AppLocalizations
+        : "otpPhoneNumber";
+
+    final String targetValue = _isVerify
+        ? (authState.otpMethod == OtpMethod.email
+              ? authState.user?.email ?? '...'
+              : authState.user?.phone ?? '...')
+        : (authState.otpPhoneNumber ?? '...');
+
+    return AuthScaffold(
       body: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const SizedBox(height: 20),
+          Text(
+           "otpVerification",
+            style: TextStylesManager.black.black12w400.copyWith(fontSize: 28),
+            textAlign: TextAlign.center,
+          ),
+         
+          const SizedBox(height: 24),
+          Text(
+            "otpCodeSentTo $targetLabel",
+            style: TextStylesManager.white.white16w400.copyWith(
+              color: ColorsManager.textWhite.withAlpha(0.85.toAlpha),
+              fontSize: 15,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          Text(
+            targetValue,
+            style: TextStylesManager.black.black14w500.copyWith(
+              fontWeight: FontWeight.bold,
+              fontSize: 18,
+            ),
+            textAlign: TextAlign.center,
+          ),
+          const SizedBox(height: 32),
           Pinput(
-            length: 4,
-            preFilledWidget: Text(
-              '*',
-              // style: TextStylesManager.grey.greyB4B4B435W400.copyWith(
-              //   color: ColorsManager.primary,
-              // ),
-            ),
-            defaultPinTheme: PinTheme(
-              width: 50,
-              height: 50,
-              textStyle: TextStylesManager.blue.blue32w400,
-              decoration: BoxDecoration(
-                color: ColorsManager.grey,
-                borderRadius: BorderRadius.circular(16),
-                // border: Border.all(color: Colors.grey),
-              ),
-            ),
+            length:4,
+            controller: _otpController,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            focusedPinTheme: PinTheme(
-              width: 50,
-              height: 50,
-              textStyle: TextStylesManager.blue.blue32w400,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: ColorsManager.primary),
+            defaultPinTheme: defaultPinTheme,
+            focusedPinTheme: defaultPinTheme.copyWith(
+              decoration: defaultPinTheme.decoration!.copyWith(
+                border: Border.all(color: Colors.black87, width: 2),
               ),
             ),
-            cursor: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Container(
-                  color: ColorsManager.primary,
-                  width: 10,
-                  height: 4,
+            onCompleted: (_) => FocusScope.of(context).unfocus(),
+          ),
+          const SizedBox(height: 32),
+          authState.loadingState == Requestenum.loading
+              ? const Center(child: LoadingIndicator())
+              : MyButton(
+                  color: Colors.black,
+                  height: 56,
+                  onPressed: _onBtnPressed,
+                  childWidget: Text(
+                    "Submit",
+                    style: const TextStyle(
+                      color: ColorsManager.textWhite,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+          const SizedBox(height: 24),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+               "otpDidntReceiveOtp",
+                style: TextStyle(
+                  color: ColorsManager.textBlack.withAlpha(0.9.toAlpha),
+                  fontSize: 14,
                 ),
               ),
-            ),
-            submittedPinTheme: PinTheme(
-              width: 50,
-              height: 50,
-              textStyle: TextStylesManager.blue.blue32w400,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: ColorsManager.primary, width: 1.5),
-              ),
-            ),
-            onChanged: (value) {},
-            onCompleted: (value) {
-              FocusScope.of(context).unfocus();
-            },
+              const SizedBox(width: 8),
+              authState.loadingState == Requestenum.loading
+                  ? const Center(child: LoadingIndicator())
+                  : GestureDetector(
+                      onTap: () => _isVerify
+                          ? authNotifier.sendCode(method)
+                          : authNotifier.forgotPassword(method: method),
+                      child: Text(
+                       "Resend",
+                        style: const TextStyle(
+                          color: ColorsManager.textBlack,
+                          fontWeight: FontWeight.bold,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+            ],
           ),
         ],
       ),

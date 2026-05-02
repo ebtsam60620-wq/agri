@@ -1,7 +1,9 @@
+import 'package:agri/modules/auth/data/models/auth_token.dart';
 import 'package:dio/dio.dart';
 import 'package:agri/data/models/failure.dart';
 import 'package:agri/data/models/option.dart';
 import 'package:agri/data/models/response_adapter.dart';
+
 
 abstract class HttpDataSource {
   void setToken(String token);
@@ -68,6 +70,8 @@ abstract class HttpDataSource {
     Map<String, dynamic>? queryParameters,
     OnExcepCatch<T>? onCatch,
   });
+
+  Future<Option<Failure, AuthToken>> refreshAccessToken();
 }
 
 typedef OnTryFuture<F> = Future<F> Function();

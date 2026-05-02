@@ -28,7 +28,7 @@ class SignUpUserFirstScreen extends HookConsumerWidget {
 
     // 3. Local state for terms checkbox
     final acceptedTerms = useState(false);
-    final state = ref.watch(authProvider); 
+    final state = ref.watch(authProvider);
     return AuthScaffold(
       step: 1,
       title: 'Create an account',
@@ -42,6 +42,9 @@ class SignUpUserFirstScreen extends HookConsumerWidget {
         // Update local terms state
         acceptedTerms.value = value ?? false;
       },
+      isLoading:
+          state.currentScreenFlow == AuthCurrentScreenFlow.login &&
+          state.loadingState == Requestenum.loading,
       onNext: () {
         // 4. Validate and Submit
         if (formKey.currentState!.validate()) {
@@ -72,6 +75,7 @@ class SignUpUserFirstScreen extends HookConsumerWidget {
               titleText: 'Full Name',
               controller: fullNameController,
               hintText: 'Enter Your Full Name',
+
               validation: (value) {
                 if (value == null || value.isEmpty)
                   return 'Please enter your name';

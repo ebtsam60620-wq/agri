@@ -1,5 +1,6 @@
 import 'package:agri/core/configs/colors_manager.dart';
 import 'package:agri/core/utils/extension_methods.dart';
+import 'package:agri/notifiers.dart';
 import 'package:agri/presentation/app_size_config.dart';
 import 'package:agri/presentation/components/my_button.dart';
 import 'package:agri/presentation/components/my_textfield.dart';
@@ -18,6 +19,7 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final splashrepo = ref.watch(splashProvider);
     return SingleChildScrollView(
       child: Column(
         spacing: 25,
@@ -29,7 +31,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Hello,', style: TextStylesManager.black.black24wBold),
+                    Text(
+                      'Hello, ${splashrepo.user?.fullName}',
+                      style: TextStylesManager.black.black24wBold,
+                    ),
                     Text(
                       'Good Morning!',
                       style: TextStylesManager.black.black24wBold,

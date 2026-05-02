@@ -24,7 +24,7 @@ class SplashRemoteDataSourceImpl extends SpalshRemoteDataSource {
     final result = await httpInterface.get(url: EndPoints.getme);
     log(result.toString());
     return result.fold((l) => l, (r) {
-      return ModelParser.parse(() => User.fromJson(r.data['data']));
+      return ModelParser.parse(() => User.fromJson(r.data['data'] ??r.data['user'] ));
     });
   }
 }

@@ -1,28 +1,28 @@
 part of 'auth_notifier.dart';
 
+//   login register forget password otp
+//
+///
 class AuthState {
   final Requestenum loadingState;
   final AuthCurrentScreenFlow currentScreenFlow;
   final String? errorMessage;
-  final String? successMessage;
-  final String? resetToken;
   final bool isGuest;
-  final UserTypeEnum userType;
-  final String otpPhoneNumber;
-  final DateTime? otpRequestedAt;
+  final String? otpPhoneNumber;
   final User? user;
+  final TokenModel? otp;
+  final OtpMethod otpMethod; // Add this
 
+  
   const AuthState({
     required this.loadingState,
     required this.currentScreenFlow,
-    this.user,
-    this.userType = UserTypeEnum.patient,
-    this.successMessage,
     this.isGuest = false,
+    this.otpPhoneNumber, // Default value
     this.errorMessage,
-    this.otpPhoneNumber = '',
-    this.otpRequestedAt,
-    this.resetToken,
+    this.user,
+    this.otp,
+    this.otpMethod = OtpMethod.email,
   });
 
   factory AuthState.initial() {
@@ -35,27 +35,23 @@ class AuthState {
   AuthState copyWith({
     Requestenum? loadingState,
     AuthCurrentScreenFlow? currentScreenFlow,
-    User? user,
     bool? isGuest,
     String? errorMessage,
-    UserTypeEnum? userType,
-    String otpPhoneNumber = '',
-    DateTime? otpRequestedAt,
-    String? successMessage,
-    String? resetToken,
+    String? otpPhoneNumber,
+    String? otpCode,
+    User? user,
+    TokenModel? otp,
+    OtpMethod? otpMethod, // Add this
   }) {
     return AuthState(
       loadingState: loadingState ?? this.loadingState,
       currentScreenFlow: currentScreenFlow ?? this.currentScreenFlow,
-      user: user ?? this.user,
       isGuest: isGuest ?? this.isGuest,
-      userType: userType ?? this.userType,
-      errorMessage: errorMessage,
-      otpPhoneNumber:
-          otpPhoneNumber.isNotEmpty ? otpPhoneNumber : this.otpPhoneNumber,
-      otpRequestedAt: otpRequestedAt ?? this.otpRequestedAt,
-      successMessage: successMessage ?? this.successMessage,
-      resetToken: resetToken ?? this.resetToken,
+      otpPhoneNumber: otpPhoneNumber ?? this.otpPhoneNumber,
+      user: user ?? this.user,
+      errorMessage: errorMessage ?? this.errorMessage,
+      otp: otp ?? this.otp,
+      otpMethod: otpMethod ?? this.otpMethod,
     );
   }
 
@@ -64,28 +60,25 @@ class AuthState {
     return 'AuthState('
         'loadingState: $loadingState, '
         'currentScreenFlow: $currentScreenFlow, '
-        'userType: $userType, '
         'isGuest: $isGuest, '
-        'errorMessage: $errorMessage'
-        ', otpPhoneNumber: $otpPhoneNumber'
-        ', otpRequestedAt: $otpRequestedAt'
-        ', successMessage: $successMessage'
-        ', resetToken: $resetToken'
+        'otpPhoneNumber: $otpPhoneNumber, '
+        'errorMessage: $errorMessage, '
+        'user: ${user?.userID ?? 'null'}'
+        'nextOtpAt ${otp?.time.toSmartString() ?? 'null '}'
         ')';
   }
 }
 
-
-
 enum AuthCurrentScreenFlow {
-  selectType,
-  login,
   register,
-  selectProviderCategories,
-  sendotp,
-  verifyphoneNumber,
-  forgotPassword,
+  login,
+
   enteringOTP,
-  logout,
+  verifyPhone,
+
+  forgotPassword,
+  checkotp,
   resetPassword,
+
+  logout,
 }

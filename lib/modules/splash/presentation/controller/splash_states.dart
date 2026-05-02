@@ -1,7 +1,7 @@
 part of 'splash_notifier.dart';
 
 class SplashStates {
-  final LoadingStateEnum loadingState;
+  final Requestenum loadingState;
   final String? errorMessage;
   final String? successMessage;
   final User? user;
@@ -14,12 +14,12 @@ class SplashStates {
     this.splashEnum = SplashEnum.init,
   });
 
-  factory SplashStates.initial() {
-    return const SplashStates(loadingState: LoadingStateEnum.initial);
+  factory SplashStates.initial({User? user}) {
+    return SplashStates(loadingState: Requestenum.init, user: user);
   }
 
   SplashStates copyWith({
-    LoadingStateEnum? loadingState,
+    Requestenum? loadingState,
     String? errorMessage,
     String? successMessage,
     User? user,
@@ -43,4 +43,12 @@ class SplashStates {
   }
 }
 
-enum SplashEnum { init, getme, getdata, noAuth, uploadAvatar, deleteAccount }
+enum SplashEnum {
+  init,
+  getme,
+  getdata,
+  noAuth,
+  uploadAvatar,
+  deleteAccount,
+  resetToken
+}

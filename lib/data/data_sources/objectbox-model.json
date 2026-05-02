@@ -5,7 +5,7 @@
   "entities": [
     {
       "id": "1:8191001011009218982",
-      "lastPropertyId": "3:4125816811933832349",
+      "lastPropertyId": "5:7594430517178905399",
       "name": "AuthToken",
       "properties": [
         {
@@ -23,6 +23,16 @@
           "id": "3:4125816811933832349",
           "name": "refreshToken",
           "type": 9
+        },
+        {
+          "id": "4:5136760278505206650",
+          "name": "createAt",
+          "type": 10
+        },
+        {
+          "id": "5:7594430517178905399",
+          "name": "expiresIn",
+          "type": 6
         }
       ],
       "relations": []

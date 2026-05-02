@@ -3,6 +3,7 @@ import 'package:agri/core/infrastructure/di.dart';
 import 'package:agri/core/resources/assets.dart';
 import 'package:agri/core/resources/route_manager.dart';
 import 'package:agri/core/utils/loading_state_enum.dart';
+import 'package:agri/core/utils/request_enum.dart';
 import 'package:agri/data/data_sources/localization_local_data_source.dart';
 import 'package:agri/notifiers.dart';
 import 'package:agri/presentation/app_size_config.dart';
@@ -81,21 +82,19 @@ class AnimatedLogoSplashState extends ConsumerState<AnimatedLogoSplash> {
       duration: const Duration(milliseconds: 500),
     );
 
-    ref.listen(splashProvider, (o, current) {
-      if (current.loadingState == LoadingStateEnum.success ||
-          current.loadingState == LoadingStateEnum.error) {
-        Future.delayed(const Duration(seconds: 4), () {
-          if (current.user != null) {
-            final user = current.user!;
-            log(user.toString());
-            RouteManager.firstScreen(user: user, goto: false);
+    ref.listen(splashProvider, (o, state) {
+      if (state.loadingState == Requestenum.success ||
+          state.loadingState == Requestenum.error) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          final langSource = di<LocalizationLocalDataSource>();
+
+          if (state.user != null) {
+            RouteManager.firstScreen(user: state.user!, goto: false);
           } else {
-            final langCode = di<LocalizationLocalDataSource>()
-                .getLocalization();
-            if (langCode.isFirstTime) {
+            if (langSource.getLocalization().isFirstTime) {
               RouteManager.replace(RouteManager.onboarding);
             } else {
-              RouteManager.replace(RouteManager.login);
+              RouteManager.replace(RouteManager.welcome);
             }
           }
         });

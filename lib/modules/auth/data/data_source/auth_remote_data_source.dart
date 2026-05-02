@@ -11,6 +11,8 @@ abstract class AuthRemoteDataSource {
 
   Future<Option<Failure, dynamic>> signup({
     required RegisterFormDto registerFormDto,
+    Function(int, int)? onSendProgress,
+      
     required String fcmToken,
   });
 
@@ -18,17 +20,17 @@ abstract class AuthRemoteDataSource {
     required String email,
     required String password,
     required String fcmToken,
-    required UserTypeEnum userType,
   });
 
-
-  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp);
+  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp, String email);
 
   // Future<Option<Failure, B>> otp2FA(String otp);
 
   Future<Option<Failure, DateTime>> sendCode(String type, String number);
   Future<Option<Failure, ResponseAdapter>> forgotPassword(
-      String type, String number);
+    String type,
+    String number,
+  );
 
   // Future<Option<Failure, B>> resendCode();
 
@@ -37,7 +39,9 @@ abstract class AuthRemoteDataSource {
   // Future<Option<Failure, B>> otpPasswordReset(String otp);
 
   Future<Option<Failure, ResponseAdapter>> passwordReset(
-      String code, String newPassword);
+    String code,
+    String newPassword,
+  );
 
   Future<Option<Failure, dynamic>> logout(String fcmToken);
   // Future<Option<Failure, dynamic>> acceptTerms();
@@ -46,15 +50,6 @@ abstract class AuthRemoteDataSource {
   // Future<Option<Failure, B>> deleteAccount();
 
   // Provider
-
-
-
-  Future<Option<Failure, ResponseAdapter>> providerCategories();
-
-  Future<Option<Failure, ResponseAdapter>> providerspecialties({
-    required int? categoryId,
-    required String? search,
-  });
 
 
   Future<Option<Failure, ResponseAdapter>> getTerms();

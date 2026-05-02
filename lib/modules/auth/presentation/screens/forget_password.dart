@@ -29,8 +29,13 @@ class ForgetPasswordScreen extends HookConsumerWidget {
     });
 
     return AuthScaffold(
-      onNext: () =>
-          RouteManager.goTo(RouteManager.otp, arguments: OtpFlow.reset),
+      onNext: () => RouteManager.goTo(
+        RouteManager.otp,
+        arguments: const OtpScreenArgs(
+          mode: OtpMode.passwordReset,
+          method: OtpMethod.email,
+        ),
+      ),
       uiNext: 'Send Code',
       title: 'Forget password',
       subTitle:

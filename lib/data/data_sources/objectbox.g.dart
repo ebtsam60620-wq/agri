@@ -24,7 +24,7 @@ final _entities = <obx_int.ModelEntity>[
   obx_int.ModelEntity(
     id: const obx_int.IdUid(1, 8191001011009218982),
     name: 'AuthToken',
-    lastPropertyId: const obx_int.IdUid(3, 4125816811933832349),
+    lastPropertyId: const obx_int.IdUid(5, 7594430517178905399),
     flags: 0,
     properties: <obx_int.ModelProperty>[
       obx_int.ModelProperty(
@@ -43,6 +43,18 @@ final _entities = <obx_int.ModelEntity>[
         id: const obx_int.IdUid(3, 4125816811933832349),
         name: 'refreshToken',
         type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 5136760278505206650),
+        name: 'createAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 7594430517178905399),
+        name: 'expiresIn',
+        type: 6,
         flags: 0,
       ),
     ],
@@ -240,10 +252,12 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final refreshTokenOffset = object.refreshToken == null
             ? null
             : fbb.writeString(object.refreshToken!);
-        fbb.startTable(4);
+        fbb.startTable(6);
         fbb.addInt64(0, object.storageID);
         fbb.addOffset(1, tokenOffset);
         fbb.addOffset(2, refreshTokenOffset);
+        fbb.addInt64(3, object.createAt.millisecondsSinceEpoch);
+        fbb.addInt64(4, object.expiresIn);
         fbb.finish(fbb.endTable());
         return object.storageID;
       },
@@ -256,8 +270,22 @@ obx_int.ModelDefinition getObjectBoxModel() {
         final refreshTokenParam = const fb.StringReader(
           asciiOptimization: true,
         ).vTableGetNullable(buffer, rootOffset, 8);
+        final createAtParam = DateTime.fromMillisecondsSinceEpoch(
+          const fb.Int64Reader().vTableGet(buffer, rootOffset, 10, 0),
+        );
+        final expiresInParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          12,
+          0,
+        );
         final object =
-            AuthToken(token: tokenParam, refreshToken: refreshTokenParam)
+            AuthToken(
+                token: tokenParam,
+                refreshToken: refreshTokenParam,
+                createAt: createAtParam,
+                expiresIn: expiresInParam,
+              )
               ..storageID = const fb.Int64Reader().vTableGet(
                 buffer,
                 rootOffset,
@@ -427,6 +455,16 @@ class AuthToken_ {
   /// See [AuthToken.refreshToken].
   static final refreshToken = obx.QueryStringProperty<AuthToken>(
     _entities[0].properties[2],
+  );
+
+  /// See [AuthToken.createAt].
+  static final createAt = obx.QueryDateProperty<AuthToken>(
+    _entities[0].properties[3],
+  );
+
+  /// See [AuthToken.expiresIn].
+  static final expiresIn = obx.QueryIntegerProperty<AuthToken>(
+    _entities[0].properties[4],
   );
 }
 

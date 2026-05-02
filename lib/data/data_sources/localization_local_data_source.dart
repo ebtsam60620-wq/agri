@@ -1,7 +1,7 @@
 
 import 'package:agri/data/models/locale.dart';
 
-abstract class LocalizationLocalDataSource {
+abstract class  LocalizationLocalDataSource {
   Future<void> init();
 
   LocaleModel getLocalization();

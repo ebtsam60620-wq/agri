@@ -21,7 +21,8 @@ class DioHttpImpl extends HttpDataSource {
   late final Dio defaultServerDio;
 
   DioHttpImpl() {
-    defaultServerDio = Dio(BaseOptions(
+    defaultServerDio = Dio(
+      BaseOptions(
         sendTimeout: const Duration(seconds: 60),
         connectTimeout: const Duration(seconds: 60),
         receiveTimeout: const Duration(seconds: 60),
@@ -29,7 +30,9 @@ class DioHttpImpl extends HttpDataSource {
         headers: {
           'Content-Type': 'application/json',
           'Accept': 'application/json',
-        }));
+        },
+      ),
+    );
 
     defaultServerDio.interceptors.add(DioInterceptor());
     setLanguageHeader();
@@ -47,8 +50,10 @@ class DioHttpImpl extends HttpDataSource {
 
   @override
   void setLanguageHeader({String? languageCode}) {
-    languageCode ??=
-        di.get<LocalizationLocalDataSource>().getLocalization().languageCode;
+    languageCode ??= di
+        .get<LocalizationLocalDataSource>()
+        .getLocalization()
+        .languageCode;
     defaultServerDio.options.headers.addAll({'Accept-Language': languageCode});
   }
 
@@ -81,8 +86,10 @@ class DioHttpImpl extends HttpDataSource {
       final userDataSource = di<UserLocalDataSource>();
       final AuthToken? authToken = userDataSource.returnAuthToken();
       if (authToken != null) {
-        final response = await defaultServerDio.post(EndPoints.updateToken,
-            data: {'refreshToken': authToken.refreshToken});
+        final response = await defaultServerDio.post(
+          EndPoints.updateToken,
+          data: {'refresh_token': authToken.refreshToken},
+        );
         final newAuthToken = AuthToken.fromJson(response.data);
         userDataSource.saveToken(newAuthToken);
         setToken(newAuthToken.token);
@@ -96,25 +103,29 @@ class DioHttpImpl extends HttpDataSource {
   }
 
   Future<Option<Failure, A>> _defaultOnCatch<A extends ResponseAdapter>(
-      OnTryFuture onTry, DioException error) async {
-    String message = '';
-    if (error.response?.data != null) {
-      message = error.response!.data['error'].toString().replaceAll('_', ' ');
-      return Left(Failure(message, error.message ?? ''));
-    }
+    OnTryFuture onTry,
+    DioException error,
+  ) async {
+    String message =
+        'An error occurred, please try again later.'; // Safe default
+
+    // 1. Handle Timeouts & Network Issues First
     if (error.type == DioExceptionType.connectionTimeout ||
         error.type == DioExceptionType.receiveTimeout ||
         error.type == DioExceptionType.sendTimeout) {
-      message = errorMessages['TIMEOUT']!;
+      message = errorMessages['TIMEOUT'] ?? 'Connection timed out.';
       return Left(Failure(message, message));
     } else if (error.error is SocketException) {
-      message = errorMessages['ERR_NETWORK']!;
+      message = errorMessages['ERR_NETWORK'] ?? 'No internet connection.';
       return Left(Failure(message, message));
-    } else if (error.response?.statusCode == 500) {
-      message = errorMessages[500];
+    }
+
+    // 2. Handle Specific Status Codes (500, 401, 403)
+    final statusCode = error.response?.statusCode;
+    if (statusCode == 500) {
+      message = errorMessages[500] ?? 'Server error.';
       return Left(Failure(message, message));
-    } else if (error.response?.statusCode == 401 ||
-        error.response?.statusCode == 403) {
+    } else if (statusCode == 401 || statusCode == 403) {
       final updateTokenResult = await _updateExpiredToken();
       if (updateTokenResult.isRight) {
         final isUpdated = updateTokenResult.right;
@@ -130,29 +141,55 @@ class DioHttpImpl extends HttpDataSource {
         di<UserLocalDataSource>().logOut();
         deleteToken();
         RouteManager.replaceUntilOrAll(RouteManager.login);
-        message = errorMessages[error.response!.statusCode];
+        message = errorMessages[statusCode] ?? 'Session expired.';
         return Left(Failure(message, message));
       }
     }
-    try {
-      if (error.response == null ||
-          error.response?.data == null ||
-          (error.response?.data['detail'] == null ||
-              error.response?.data['message'] == null)) {
-        message = error.message ?? 'An error occurred, please try again later.';
-      } else {
-        message = error.response!.data['response']['error_description'] ??
-            error.response!.data['message'] ??
-            error.response!.data['detail'] ??
-            error.message ??
-            errorMessages[error.response!.statusCode]!;
+
+    // 3. Parse API Error Response for the UI
+    if (error.response?.data != null) {
+      final data = error.response!.data;
+
+      if (data is Map<String, dynamic>) {
+        // Priority 1: Nested validation fields (Now handles Arrays!)
+        // Parses: {error: Validation error, fields: {email: ["Not valid."]}}
+        if (data['fields'] != null && data['fields'] is Map) {
+          final fields = data['fields'] as Map;
+          if (fields.isNotEmpty) {
+            List<String> extractedErrors = [];
+
+            for (var value in fields.values) {
+              if (value is List) {
+                // Extracts strings from the brackets and adds them to our list
+                extractedErrors.addAll(value.map((e) => e.toString()));
+              } else {
+                // Failsafe in case the backend sometimes sends a plain string
+                extractedErrors.add(value.toString());
+              }
+            }
+            // Joins all extracted errors with a line break
+            message = extractedErrors.join('\n');
+          }
+        }
+        // Priority 2: Fallbacks for standard API error keys
+        else if (data['message'] != null) {
+          message = data['message'].toString();
+        } else if (data['error_description'] != null) {
+          message = data['error_description'].toString();
+        } else if (data['detail'] != null) {
+          message = data['detail'].toString();
+        }
+        // Parses: {error: Invalid credentials}
+        else if (data['error'] != null) {
+          message = data['error'].toString().replaceAll('_', ' ');
+        }
+      } else if (data is String) {
+        message = data;
       }
-    } catch (e) {
+    } else if (error.message != null) {
       message = error.message!;
     }
-    if (error.response?.data != null) {
-      message = error.response!.data['message'];
-    }
+
     return Left(Failure(message, error.message ?? ''));
   }
 
@@ -172,22 +209,25 @@ class DioHttpImpl extends HttpDataSource {
     return await _handleRequest(
       onCatch: onCatch,
       onTry: () {
-        return defaultServerDio.get(url,
-            queryParameters: newQueryParameters,
-            options: Options(headers: requestHeaders));
+        return defaultServerDio.get(
+          url,
+          queryParameters: newQueryParameters,
+          options: Options(headers: requestHeaders),
+        );
       },
     );
   }
 
   @override
-  Future<Option<Failure, A>> post<A extends ResponseAdapter>(
-      {required String url,
-      Object? data,
-      Map<String, dynamic>? queryParameters,
-      Map<String, dynamic>? headers,
-      OnExcepCatch<A>? onCatch,
-      CancelToken? cancelToken,
-      Function(int, int)? onSendProgress}) async {
+  Future<Option<Failure, A>> post<A extends ResponseAdapter>({
+    required String url,
+    Object? data,
+    Map<String, dynamic>? queryParameters,
+    Map<String, dynamic>? headers,
+    OnExcepCatch<A>? onCatch,
+    CancelToken? cancelToken,
+    Function(int, int)? onSendProgress,
+  }) async {
     final newQueryParameters = queryParameters
       ?..removeWhere((key, value) => value == null);
     final requestHeaders = {...getHeaders};
@@ -197,12 +237,14 @@ class DioHttpImpl extends HttpDataSource {
     return await _handleRequest(
       onCatch: onCatch,
       onTry: () {
-        return defaultServerDio.post(url,
-            data: data,
-            cancelToken: cancelToken,
-            queryParameters: newQueryParameters,
-            onSendProgress: onSendProgress,
-            options: Options(headers: requestHeaders));
+        return defaultServerDio.post(
+          url,
+          data: data,
+          cancelToken: cancelToken,
+          queryParameters: newQueryParameters,
+          onSendProgress: onSendProgress,
+          options: Options(headers: requestHeaders),
+        );
       },
     );
   }
@@ -224,10 +266,12 @@ class DioHttpImpl extends HttpDataSource {
     return await _handleRequest(
       onCatch: onCatch,
       onTry: () {
-        return defaultServerDio.put(url,
-            data: data,
-            queryParameters: newQueryParameters,
-            options: Options(headers: requestHeaders));
+        return defaultServerDio.put(
+          url,
+          data: data,
+          queryParameters: newQueryParameters,
+          options: Options(headers: requestHeaders),
+        );
       },
     );
   }
@@ -249,10 +293,12 @@ class DioHttpImpl extends HttpDataSource {
     return await _handleRequest(
       onCatch: onCatch,
       onTry: () {
-        return defaultServerDio.patch(url,
-            data: data,
-            queryParameters: newQueryParameters,
-            options: Options(headers: requestHeaders));
+        return defaultServerDio.patch(
+          url,
+          data: data,
+          queryParameters: newQueryParameters,
+          options: Options(headers: requestHeaders),
+        );
       },
     );
   }
@@ -274,10 +320,12 @@ class DioHttpImpl extends HttpDataSource {
     return await _handleRequest(
       onCatch: onCatch,
       onTry: () {
-        return defaultServerDio.delete(url,
-            data: data,
-            queryParameters: newQueryParameters,
-            options: Options(headers: requestHeaders));
+        return defaultServerDio.delete(
+          url,
+          data: data,
+          queryParameters: newQueryParameters,
+          options: Options(headers: requestHeaders),
+        );
       },
     );
   }
@@ -295,17 +343,20 @@ class DioHttpImpl extends HttpDataSource {
       requestHeaders.addAll(headers);
     }
     return await _handleRequest(
-        onCatch: onCatch,
-        onTry: () {
-          return defaultServerDio.requestUri(Uri.parse(url),
-              data: data,
-              options: Options(method: method, headers: requestHeaders));
-        });
+      onCatch: onCatch,
+      onTry: () {
+        return defaultServerDio.requestUri(
+          Uri.parse(url),
+          data: data,
+          options: Options(method: method, headers: requestHeaders),
+        );
+      },
+    );
   }
 
   @override
   Future<Option<Failure, A>>
-      requestStreamedResponseUsingDio<A extends ResponseAdapter>({
+  requestStreamedResponseUsingDio<A extends ResponseAdapter>({
     required String url,
     Object? data,
     Map<String, dynamic>? queryParameters,
@@ -342,6 +393,25 @@ class DioHttpImpl extends HttpDataSource {
       String message = '';
       message = error.message;
       return Left(Failure(message, error.message));
+    } catch (e) {
+      return Left(Failure(e.toString(), e.toString()));
+    }
+  }
+
+  @override
+  Future<Option<Failure, AuthToken>> refreshAccessToken() async {
+    final userDataSource = di<UserLocalDataSource>();
+    final AuthToken? authToken = userDataSource.returnAuthToken();
+    if (authToken == null) return Right(false);
+    try {
+      final response = await defaultServerDio.post(
+        EndPoints.updateToken,
+        data: {'refreshToken': authToken.refreshToken},
+      );
+      final newAuthToken = AuthToken.fromJson(response.data['data']);
+      userDataSource.saveToken(newAuthToken);
+      setToken(newAuthToken.token);
+      return Right(newAuthToken);
     } catch (e) {
       return Left(Failure(e.toString(), e.toString()));
     }

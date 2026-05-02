@@ -56,7 +56,7 @@ flutter:
   assets:
     - assets/
     - assets/images/
-    - assets/svg/
+    - assets/SVG/
     - assets/png/
 
 objectbox:

@@ -128,15 +128,13 @@ class RouteManager {
 
   static void firstScreen({User? user, bool goto = true}) async {
     user ??= di.get<UserLocalDataSource>().returnUser()!;
-    void navigate(String route) {
-      if (goto) {
-        RouteManager.goTo(route);
-      } else {
-        RouteManager.replaceUntilOrAll(route);
-      }
-    }
 
-    navigate(RouteManager.splash);
+    replaceUntilOrAll(RouteManager.home);
+    return;
+    if (user.isVerified ?? false) {
+    } else {
+      replaceUntilOrAll(RouteManager.otp);
+    }
   }
 
   // splash
@@ -152,7 +150,6 @@ class RouteManager {
   static const String createNewPassword = '/createNewPassword';
 
   static const String terms = '/terms';
-
 
   static const String home = '/home';
 
@@ -207,7 +204,7 @@ class RouteManager {
             otp => const OtpVerificationScreen(),
             createNewPassword => const NewPasswordScreen(),
             signUpUser => const SignUpUserFirstScreen(),
-            home=> const MyScafold(),
+            home => const MyScafold(),
             _ => const SplashScreen(),
           },
         );

@@ -1,4 +1,3 @@
-
 import 'package:agri/core/utils/user_type_enum.dart';
 import 'package:agri/data/data_sources/user_local_data_source.dart';
 import 'package:agri/data/models/failure.dart';
@@ -18,12 +17,12 @@ abstract class AuthRepo {
 
   Future<Option<Failure, User>> signup({
     required RegisterFormDto registerFormDto,
+    Function(int, int)? onSendProgress,
   });
 
   Future<Option<Failure, User>> login({
     required String email,
     required String password,
-    required UserTypeEnum userType,
   });
 
   // Future<Option<Failure, AuthToken>> guestLogin();
@@ -40,7 +39,9 @@ abstract class AuthRepo {
   Future<Option<Failure, DateTime>> sendCode(String type, String number);
 
   Future<Option<Failure, ResponseAdapter>> forgotPassword(
-      String type, String number);
+    String type,
+    String number,
+  );
 
   // Future<Option<Failure, Null>> resendCode();
 
@@ -51,9 +52,11 @@ abstract class AuthRepo {
   // Future<Option<Failure, Null>> forgotPassword(String email);
 
   // Future<Option<Failure, Null>> otpPasswordReset(String otp);
-  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp);
+  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp , String email);
   Future<Option<Failure, ResponseAdapter>> passwordReset(
-      String code, String newPassword);
+    String code,
+    String newPassword,
+  );
 
   void saveUser(User user);
 

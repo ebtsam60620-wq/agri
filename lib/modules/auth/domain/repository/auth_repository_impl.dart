@@ -29,18 +29,23 @@ class AuthRepositoryImpl extends AuthRepo {
   @override
   Future<Option<Failure, User>> signup({
     required RegisterFormDto registerFormDto,
+    Function(int, int)? onSendProgress,
   }) async {
     // final fcmToken = (await FirebaseMessaging.instance.getToken()) ?? '';
     return await remoteDataSource
-        .signup(registerFormDto: registerFormDto, fcmToken: "fcmToken")
+        .signup(
+          registerFormDto: registerFormDto,
+          onSendProgress: onSendProgress,
+          fcmToken: "fcmToken",
+        )
         .then(
           (e) => e.fold((left) => left, (right) {
             final token = ModelParser.parse(
-              () => AuthToken.fromJson(right.data['user']),
-            ); 
+              () => AuthToken.fromJson(right.data),
+            );
             remoteDataSource.saveToken(token.token);
             final user = ModelParser.parse(
-              () => User.fromJson(right.data['data']['user']),
+              () => User.fromJson(right.data['user']),
             );
             localDataSource.saveToken(token);
             saveUser(user);
@@ -64,15 +69,13 @@ class AuthRepositoryImpl extends AuthRepo {
   }
 
   @override
-  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp) async {
-    final result = await remoteDataSource.verifyPhone(otp);
+  Future<Option<Failure, ResponseAdapter>> verifyPhone(String otp , String email) async {
+    final result = await remoteDataSource.verifyPhone(otp , email);
     return result.fold((left) => left, (right) {
       // final user = User.fromJson(right.data["data"]["user"]);
       // saveUser(user);
       saveUser(
-        di.get<UserLocalDataSource>().returnUser()!.copyWith(
-          isVerified:true,
-        ),
+        di.get<UserLocalDataSource>().returnUser()!.copyWith(isVerified: true),
       );
       return right;
     });
@@ -82,28 +85,21 @@ class AuthRepositoryImpl extends AuthRepo {
   Future<Option<Failure, User>> login({
     required String email,
     required String password,
-    required UserTypeEnum userType,
   }) async {
     // final fcmToken = (await FirebaseMessaging.instance.getToken()) ?? '';
     final result = await remoteDataSource.login(
       email: email,
       password: password,
       fcmToken: "fcmToken",
-      userType: userType,
     );
     return result.fold((left) => left, (right) {
-      final token = ModelParser.parse(
-        () => AuthToken.fromJson(right.data['data']),
-      );
-      final user = ModelParser.parse(
-        () => User.fromJson(
-          right.data['data']['user'],
-        ),
-      );
-    
-        localDataSource.saveToken(token);
-        saveUser(user);
-      
+      final token = ModelParser.parse(() => AuthToken.fromJson(right.data));
+      remoteDataSource.saveToken(token.token);
+      final user = ModelParser.parse(() => User.fromJson(right.data['user']));
+
+      localDataSource.saveToken(token);
+      saveUser(user);
+
       return user;
     });
   }

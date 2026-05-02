@@ -1,60 +1,89 @@
-import 'package:agri/core/utils/loading_state_enum.dart';
+import 'package:agri/core/infrastructure/di.dart';
+import 'package:agri/core/utils/request_enum.dart';
 import 'package:agri/data/data_sources/user_local_data_source.dart';
+import 'package:agri/data/interfaces/abstract_http_data_source.dart';
 import 'package:agri/data/models/user.dart';
+import 'package:agri/modules/auth/domain/repository/auth_repository.dart';
 import 'package:agri/modules/splash/domain/repository/splash_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'splash_states.dart';
 
-class SplashNotifier extends AutoDisposeNotifier<SplashStates> {
-  SplashNotifier(this._authRepo, this._userLocalDataSource);
+class SplashNotifier extends Notifier<SplashStates> {
+  SplashNotifier(this._splasrepo, this._userLocalDataSource);
   final UserLocalDataSource _userLocalDataSource;
 
   @override
   SplashStates build() {
-    Future.microtask(() => initializeApp());
-    return SplashStates.initial();
+    final user = di<UserLocalDataSource>().returnUser();
+    if (user != null) {
+      Future.microtask(() => setUser(user));
+    }
+    return SplashStates.initial(user: user);
   }
 
-  final SplachRepo _authRepo;
+  final SplachRepo _splasrepo;
+  void setUser(User user) {
+    state = state.copyWith(user: user);
+  }
+
+  void logout() {
+    state = SplashStates.initial();
+  }
+
   Future<void> initializeApp() async {
     await getme();
-    if (state.splashEnum == SplashEnum.getme &&
-        state.loadingState == LoadingStateEnum.success &&
-        state.user != null) {
-    }
+    // if (state.splashEnum == SplashEnum.getme &&
+    //     state.loadingState == Requestenum.success &&
+    //     state.user != null) {
+    //   await getdata();
+    // }
   }
 
   Future<void> getme() async {
-    if (!_userLocalDataSource.isAuthTokenExists()) {
+    final token = _userLocalDataSource.returnAuthToken();
+    if (token == null) {
       state = state.copyWith(
-        loadingState: LoadingStateEnum.success,
+        loadingState: Requestenum.success,
         splashEnum: SplashEnum.noAuth,
       );
       return;
     }
+    if (token.canRefresh && token.isExpired) {
+      await di<HttpDataSource>().refreshAccessToken();
+    } else if (!token.canRefresh) {
+      di<AuthRepo>().logout(false);
+      state = SplashStates.initial();
+      return;
+    }
+
     state = state.copyWith(
-      loadingState: LoadingStateEnum.loading,
+      loadingState: Requestenum.loading,
       splashEnum: SplashEnum.getme,
     );
-    final result = await _authRepo.getMe();
+    final result = await _splasrepo.getMe();
 
     result.fold(
-      (failure) {
+      (failure) async {
         if (failure.message == 'authentication required') {
-          _userLocalDataSource.logOut();
+          // _userLocalDataSource.logOut();
+          await di<HttpDataSource>().refreshAccessToken();
+          getme();
+          if (state.splashEnum != SplashEnum.resetToken) {
+            state = state.copyWith(splashEnum: SplashEnum.resetToken);
+            return;
+          }
         }
         state = state.copyWith(
-          loadingState: LoadingStateEnum.error,
+          loadingState: Requestenum.error,
           errorMessage: failure.message,
         );
       },
       (user) {
         // _userLocalDataSource.saveUser(user);
-        state = state.copyWith(
-          loadingState: LoadingStateEnum.success,
-          user: user,
-        );
+        state = state.copyWith(loadingState: Requestenum.success, user: user);
+
+        // getdata();
       },
     );
   }

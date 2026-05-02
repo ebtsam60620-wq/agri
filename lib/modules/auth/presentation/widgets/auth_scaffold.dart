@@ -1,9 +1,12 @@
+import 'package:agri/presentation/components/loading_indicator.dart';
 import 'package:agri/presentation/components/my_button.dart';
 import 'package:agri/presentation/components/my_checkbox.dart';
 import 'package:flutter/material.dart';
 import 'package:agri/core/configs/colors_manager.dart';
 import 'package:agri/presentation/app_size_config.dart';
 import 'package:agri/presentation/textstyles.dart';
+// Note: Make sure to import your LoadingIndicator widget here if it's in a separate file!
+// import 'package:agri/presentation/components/loading_indicator.dart';
 
 class AuthScaffold extends StatelessWidget {
   const AuthScaffold({
@@ -20,6 +23,7 @@ class AuthScaffold extends StatelessWidget {
     this.onNext,
     this.onSub,
     this.onSelectChange,
+    this.isLoading = false, // <-- Added isLoading prop
     // Container Props
     this.height,
     this.width,
@@ -40,6 +44,7 @@ class AuthScaffold extends StatelessWidget {
   final void Function()? onNext;
   final void Function()? onSub;
   final ValueChanged<bool?>? onSelectChange;
+  final bool isLoading; // <-- Added isLoading variable
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +53,7 @@ class AuthScaffold extends StatelessWidget {
       backgroundColor: ColorsManager.scaffoldBgColor,
       appBar: AuthAppBar(title: title ?? '', step: step, subTitle: subTitle),
       body: Container(
-        margin: EdgeInsets.only(top: 60, right: 20, left: 20),
+        margin: const EdgeInsets.only(top: 60, right: 20, left: 20),
         child: body,
       ),
       bottomNavigationBar: AuthBottomNav(
@@ -58,6 +63,7 @@ class AuthScaffold extends StatelessWidget {
         subEnd: bottomSubEnd,
         onSub: onSub,
         onSelectChange: onSelectChange,
+        isLoading: isLoading, // <-- Passed isLoading to BottomNav
       ),
     );
   }
@@ -72,10 +78,14 @@ class AuthBottomNav extends StatelessWidget {
     this.onNext,
     this.onSub,
     this.onSelectChange,
+    this.isLoading = false, // <-- Added isLoading prop
   });
+
   final String? uiNext, subTitle, subEnd;
   final void Function()? onNext, onSub;
   final ValueChanged<bool?>? onSelectChange;
+  final bool isLoading; // <-- Added isLoading variable
+
   @override
   Widget build(BuildContext context) {
     bool value = false;
@@ -98,18 +108,23 @@ class AuthBottomNav extends StatelessWidget {
                       return MyCheckbox(
                         isCircle: false,
                         value: value,
-                        changingValueFunction: () {
-                          fun(() {
-                            value = !value;
-                            onSelectChange?.call(value);
-                          });
-                        },
+                        changingValueFunction: isLoading
+                            ? null
+                            : () {
+                                // <-- Disabled checkbox while loading
+                                fun(() {
+                                  value = !value;
+                                  onSelectChange?.call(value);
+                                });
+                              },
                       );
                     },
                   ),
                 Text(subTitle!, style: TextStylesManager.black.black12w500),
                 GestureDetector(
-                  onTap: onSub,
+                  onTap: isLoading
+                      ? null
+                      : onSub, // <-- Disabled tap while loading
                   child: Text(
                     subEnd!,
                     style: TextStylesManager.black.black14w700,
@@ -119,17 +134,17 @@ class AuthBottomNav extends StatelessWidget {
             ),
           if (onNext != null)
             MyButton(
-              margin: EdgeInsets.symmetric(horizontal: 20),
-              onPressed: onNext,
-              childWidget: Text(
-                uiNext!,
-                style: TextStyle(color: ColorsManager.white),
-              ),
+              margin: const EdgeInsets.symmetric(horizontal: 20),
+              onPressed: isLoading
+                  ? null
+                  : onNext, // <-- Disabled button while loading
               color: ColorsManager.secondary,
+              // <-- Replaced Text with LoadingIndicator when isLoading is true
+              childWidget: isLoading
+                  ? const LoadingIndicator()
+                  : Text(uiNext!, style: TextStyle(color: ColorsManager.white)),
             ),
-          SizedBox(
-            height: 15 + MediaQuery.of(context).viewPadding.bottom,
-          ), // 15 + Button Navigation if open + maby keybaord ?
+          SizedBox(height: 15 + MediaQuery.of(context).viewPadding.bottom),
         ],
       ),
     );
