@@ -5,7 +5,7 @@ import 'package:agri/presentation/components/my_scafold.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 final authProvider = NotifierProvider<AuthNotifier, AuthState>(
-  () => AuthNotifier(di(), di()),
+  () => AuthNotifier(di(), di(), di()),
   name: 'authProvider',
 );
 
@@ -14,7 +14,7 @@ final layoutProvider = StateProvider.autoDispose<HomePages>((ref) {
 }, name: 'layoutProvider');
 
 final splashProvider = NotifierProvider<SplashNotifier, SplashStates>(
-  () => SplashNotifier(di(), di()),
+  () => SplashNotifier(di(), di(), di()),
   name: 'splashProvider',
 );
 

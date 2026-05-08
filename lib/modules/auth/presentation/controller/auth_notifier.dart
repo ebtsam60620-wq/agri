@@ -6,12 +6,17 @@ import 'package:agri/modules/auth/data/forms/register_form_dto.dart';
 import 'package:agri/modules/auth/data/models/token_model.dart';
 import 'package:agri/modules/auth/domain/repository/auth_repository.dart';
 import 'package:agri/modules/auth/presentation/screens/otp_screen.dart';
+import 'package:agri/modules/device_model/domain/repository/device_repo.dart';
 import 'package:agri/notifiers.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 part 'auth_states.dart';
 
 class AuthNotifier extends Notifier<AuthState> {
-  AuthNotifier(this._authRepo, this._userLocalDataSource);
+  AuthNotifier(
+    this._authRepo,
+    this._userLocalDataSource,
+    this._moduleRepository,
+  );
 
   @override
   AuthState build() {
@@ -22,6 +27,7 @@ class AuthNotifier extends Notifier<AuthState> {
 
   final UserLocalDataSource _userLocalDataSource;
   final AuthRepo _authRepo;
+  final DeviceModuleRepository _moduleRepository;
 
   // --- Helper to reduce boilerplate ---
   void _setLoading(
@@ -76,8 +82,10 @@ class AuthNotifier extends Notifier<AuthState> {
     try {
       _setLoading(AuthCurrentScreenFlow.login);
       final result = await _authRepo.login(email: email, password: password);
-      result.fold((failure) => _setError(failure.message), (data) {
+      result.fold((failure) => _setError(failure.message), (data) async {
         ref.read(splashProvider.notifier).setUser(data);
+        await _moduleRepository.getMyModules();
+
         state = state.copyWith(loadingState: Requestenum.success, user: data);
       });
     } catch (e) {

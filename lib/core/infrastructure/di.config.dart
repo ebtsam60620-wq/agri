@@ -28,6 +28,18 @@ import 'package:agri/modules/auth/domain/repository/auth_repository.dart'
     as _i680;
 import 'package:agri/modules/auth/domain/repository/auth_repository_impl.dart'
     as _i8;
+import 'package:agri/modules/device_model/data/data_source/device_local_data_source.dart'
+    as _i161;
+import 'package:agri/modules/device_model/data/data_source/device_local_data_source_imp.dart'
+    as _i363;
+import 'package:agri/modules/device_model/data/data_source/model_data_source.dart'
+    as _i1053;
+import 'package:agri/modules/device_model/data/data_source/model_data_source_imp.dart'
+    as _i313;
+import 'package:agri/modules/device_model/domain/repository/device_repo.dart'
+    as _i1065;
+import 'package:agri/modules/device_model/domain/repository/device_repo_imp.dart'
+    as _i390;
 import 'package:agri/modules/splash/data/data_source/auth_remote_impl.dart'
     as _i179;
 import 'package:agri/modules/splash/data/data_source/splash_remote_data_source.dart'
@@ -57,9 +69,16 @@ extension GetItInjectableX on _i174.GetIt {
       final i = _i114.LocalizationStorageImpl();
       return i.init().then((_) => i);
     }, preResolve: true);
+    await gh.lazySingletonAsync<_i161.DeviceModuleLocalDataSource>(() {
+      final i = _i363.DeviceModuleLocalDataSourceImpl();
+      return i.init().then((_) => i);
+    }, preResolve: true);
     gh.lazySingleton<_i651.HttpDataSource>(() => _i581.DioHttpImpl());
     gh.lazySingleton<_i103.AuthRemoteDataSource>(
       () => _i831.AuthRemoteDataSourceImpl(gh<_i651.HttpDataSource>()),
+    );
+    gh.lazySingleton<_i1053.DeviceModuleRemoteDataSource>(
+      () => _i313.DeviceModelDataSourceImp(gh<_i651.HttpDataSource>()),
     );
     gh.lazySingleton<_i170.SpalshRemoteDataSource>(
       () => _i179.SplashRemoteDataSourceImpl(gh<_i651.HttpDataSource>()),
@@ -75,6 +94,12 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i170.SpalshRemoteDataSource>(),
         gh<_i311.UserLocalDataSource>(),
       )..init(),
+    );
+    gh.lazySingleton<_i1065.DeviceModuleRepository>(
+      () => _i390.DeviceModuleRepositoryImpl(
+        gh<_i1053.DeviceModuleRemoteDataSource>(),
+        gh<_i161.DeviceModuleLocalDataSource>(),
+      ),
     );
     return this;
   }

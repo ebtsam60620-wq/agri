@@ -79,4 +79,8 @@ class EndPoints {
   static const String markNotificationsRead = '/notifications/mark-read';
 
   static const String markAllNotificationsRead = '/notifications/mark-all-read';
+
+  //models
+  static const String myModules = '/modules/my';
+  
 }

@@ -9,6 +9,7 @@ import 'package:agri/modules/auth/presentation/screens/new_password_screen.dart'
 import 'package:agri/modules/auth/presentation/screens/otp_screen.dart';
 import 'package:agri/modules/auth/presentation/screens/signup_user_first_screen.dart';
 import 'package:agri/modules/auth/presentation/screens/welcome_screen.dart';
+import 'package:agri/modules/device_model/domain/repository/device_repo.dart';
 import 'package:agri/modules/onboarding_screen/screens/onboarding_main.dart';
 import 'package:agri/modules/splash/presentation/splash_screen.dart';
 import 'package:agri/presentation/components/my_scafold.dart';
@@ -129,9 +130,15 @@ class RouteManager {
   static void firstScreen({User? user, bool goto = true}) async {
     user ??= di.get<UserLocalDataSource>().returnUser()!;
 
-    replaceUntilOrAll(RouteManager.home);
-    return;
     if (user.isVerified ?? false) {
+      if ((((await di.get<DeviceModuleRepository>().getMyModules())
+              .right
+              ?.isNotEmpty) ??
+          false)) {
+        replaceUntilOrAll(RouteManager.home);
+      } else {
+        replaceUntilOrAll(RouteManager.home);
+      }
     } else {
       replaceUntilOrAll(RouteManager.otp);
     }

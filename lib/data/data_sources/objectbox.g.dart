@@ -17,6 +17,7 @@ import 'package:objectbox_sync_flutter_libs/objectbox_sync_flutter_libs.dart';
 import '../../data/models/locale.dart';
 import '../../data/models/user.dart';
 import '../../modules/auth/data/models/auth_token.dart';
+import '../../modules/device_model/data/model/device_module.dart';
 
 export 'package:objectbox/objectbox.dart'; // so that callers only have to import this file
 
@@ -154,6 +155,77 @@ final _entities = <obx_int.ModelEntity>[
     relations: <obx_int.ModelRelation>[],
     backlinks: <obx_int.ModelBacklink>[],
   ),
+  obx_int.ModelEntity(
+    id: const obx_int.IdUid(5, 6133289113546453334),
+    name: 'DeviceModule',
+    lastPropertyId: const obx_int.IdUid(10, 6331152917213047750),
+    flags: 0,
+    properties: <obx_int.ModelProperty>[
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(1, 2984601158272146765),
+        name: 'storageID',
+        type: 6,
+        flags: 1,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(2, 1421677574612994303),
+        name: 'moduleID',
+        type: 6,
+        flags: 32808,
+        indexId: const obx_int.IdUid(3, 2595704710517902453),
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(3, 7592354449742911781),
+        name: 'moduleCode',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(4, 8027536238037485310),
+        name: 'nickname',
+        type: 9,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(5, 6042206924982231665),
+        name: 'locationLat',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(6, 8243136704772116024),
+        name: 'locationLng',
+        type: 8,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(7, 3217537753826237634),
+        name: 'updateIntervalSec',
+        type: 6,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(8, 8308607185548485457),
+        name: 'lastSeenAt',
+        type: 10,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(9, 4049315120805157619),
+        name: 'isActive',
+        type: 1,
+        flags: 0,
+      ),
+      obx_int.ModelProperty(
+        id: const obx_int.IdUid(10, 6331152917213047750),
+        name: 'role',
+        type: 9,
+        flags: 0,
+      ),
+    ],
+    relations: <obx_int.ModelRelation>[],
+    backlinks: <obx_int.ModelBacklink>[],
+  ),
 ];
 
 /// Shortcut for [obx.Store.new] that passes [getObjectBoxModel] and for Flutter
@@ -199,11 +271,11 @@ obx_int.ModelDefinition getObjectBoxModel() {
     // Typically, this is done with `dart run build_runner build`.
     generatorVersion: obx_int.GeneratorVersion.v2025_12_16,
     entities: _entities,
-    lastEntityId: const obx_int.IdUid(3, 3379791530785140218),
-    lastIndexId: const obx_int.IdUid(1, 6555721987836142718),
+    lastEntityId: const obx_int.IdUid(5, 6133289113546453334),
+    lastIndexId: const obx_int.IdUid(3, 2595704710517902453),
     lastRelationId: const obx_int.IdUid(0, 0),
     lastSequenceId: const obx_int.IdUid(0, 0),
-    retiredEntityUids: const [],
+    retiredEntityUids: const [436708383640333438],
     retiredIndexUids: const [],
     retiredPropertyUids: const [
       1122004979063295114,
@@ -231,6 +303,16 @@ obx_int.ModelDefinition getObjectBoxModel() {
       2957840177645514620,
       3563285707346189738,
       3198876252525019743,
+      1968592051824169467,
+      891907360638285224,
+      6203041988199422711,
+      8858204288828065870,
+      320472000532999011,
+      7834989985584051321,
+      7263516531845161675,
+      3710421184098983478,
+      440315424674680125,
+      8928419947039706634,
     ],
     retiredRelationUids: const [],
     modelVersion: 5,
@@ -435,6 +517,106 @@ obx_int.ModelDefinition getObjectBoxModel() {
         return object;
       },
     ),
+    DeviceModule: obx_int.EntityDefinition<DeviceModule>(
+      model: _entities[3],
+      toOneRelations: (DeviceModule object) => [],
+      toManyRelations: (DeviceModule object) => {},
+      getId: (DeviceModule object) => object.storageID,
+      setId: (DeviceModule object, int id) {
+        object.storageID = id;
+      },
+      objectToFB: (DeviceModule object, fb.Builder fbb) {
+        final moduleCodeOffset = object.moduleCode == null
+            ? null
+            : fbb.writeString(object.moduleCode!);
+        final nicknameOffset = object.nickname == null
+            ? null
+            : fbb.writeString(object.nickname!);
+        final roleOffset = object.role == null
+            ? null
+            : fbb.writeString(object.role!);
+        fbb.startTable(11);
+        fbb.addInt64(0, object.storageID);
+        fbb.addInt64(1, object.moduleID);
+        fbb.addOffset(2, moduleCodeOffset);
+        fbb.addOffset(3, nicknameOffset);
+        fbb.addFloat64(4, object.locationLat);
+        fbb.addFloat64(5, object.locationLng);
+        fbb.addInt64(6, object.updateIntervalSec);
+        fbb.addInt64(7, object.lastSeenAt?.millisecondsSinceEpoch);
+        fbb.addBool(8, object.isActive);
+        fbb.addOffset(9, roleOffset);
+        fbb.finish(fbb.endTable());
+        return object.storageID;
+      },
+      objectFromFB: (obx.Store store, ByteData fbData) {
+        final buffer = fb.BufferContext(fbData);
+        final rootOffset = buffer.derefObject(0);
+        final lastSeenAtValue = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          18,
+        );
+        final storageIDParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          4,
+          0,
+        );
+        final moduleIDParam = const fb.Int64Reader().vTableGet(
+          buffer,
+          rootOffset,
+          6,
+          0,
+        );
+        final moduleCodeParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 8);
+        final nicknameParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 10);
+        final locationLatParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          12,
+        );
+        final locationLngParam = const fb.Float64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          14,
+        );
+        final updateIntervalSecParam = const fb.Int64Reader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          16,
+        );
+        final lastSeenAtParam = lastSeenAtValue == null
+            ? null
+            : DateTime.fromMillisecondsSinceEpoch(lastSeenAtValue);
+        final isActiveParam = const fb.BoolReader().vTableGetNullable(
+          buffer,
+          rootOffset,
+          20,
+        );
+        final roleParam = const fb.StringReader(
+          asciiOptimization: true,
+        ).vTableGetNullable(buffer, rootOffset, 22);
+        final object = DeviceModule(
+          storageID: storageIDParam,
+          moduleID: moduleIDParam,
+          moduleCode: moduleCodeParam,
+          nickname: nicknameParam,
+          locationLat: locationLatParam,
+          locationLng: locationLngParam,
+          updateIntervalSec: updateIntervalSecParam,
+          lastSeenAt: lastSeenAtParam,
+          isActive: isActiveParam,
+          role: roleParam,
+        );
+
+        return object;
+      },
+    ),
   };
 
   return obx_int.ModelDefinition(model, bindings);
@@ -531,5 +713,58 @@ class User_ {
   /// See [User.termsAcceptedAt].
   static final termsAcceptedAt = obx.QueryDateProperty<User>(
     _entities[2].properties[8],
+  );
+}
+
+/// [DeviceModule] entity fields to define ObjectBox queries.
+class DeviceModule_ {
+  /// See [DeviceModule.storageID].
+  static final storageID = obx.QueryIntegerProperty<DeviceModule>(
+    _entities[3].properties[0],
+  );
+
+  /// See [DeviceModule.moduleID].
+  static final moduleID = obx.QueryIntegerProperty<DeviceModule>(
+    _entities[3].properties[1],
+  );
+
+  /// See [DeviceModule.moduleCode].
+  static final moduleCode = obx.QueryStringProperty<DeviceModule>(
+    _entities[3].properties[2],
+  );
+
+  /// See [DeviceModule.nickname].
+  static final nickname = obx.QueryStringProperty<DeviceModule>(
+    _entities[3].properties[3],
+  );
+
+  /// See [DeviceModule.locationLat].
+  static final locationLat = obx.QueryDoubleProperty<DeviceModule>(
+    _entities[3].properties[4],
+  );
+
+  /// See [DeviceModule.locationLng].
+  static final locationLng = obx.QueryDoubleProperty<DeviceModule>(
+    _entities[3].properties[5],
+  );
+
+  /// See [DeviceModule.updateIntervalSec].
+  static final updateIntervalSec = obx.QueryIntegerProperty<DeviceModule>(
+    _entities[3].properties[6],
+  );
+
+  /// See [DeviceModule.lastSeenAt].
+  static final lastSeenAt = obx.QueryDateProperty<DeviceModule>(
+    _entities[3].properties[7],
+  );
+
+  /// See [DeviceModule.isActive].
+  static final isActive = obx.QueryBooleanProperty<DeviceModule>(
+    _entities[3].properties[8],
+  );
+
+  /// See [DeviceModule.role].
+  static final role = obx.QueryStringProperty<DeviceModule>(
+    _entities[3].properties[9],
   );
 }

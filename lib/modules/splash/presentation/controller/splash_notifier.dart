@@ -4,14 +4,21 @@ import 'package:agri/data/data_sources/user_local_data_source.dart';
 import 'package:agri/data/interfaces/abstract_http_data_source.dart';
 import 'package:agri/data/models/user.dart';
 import 'package:agri/modules/auth/domain/repository/auth_repository.dart';
+import 'package:agri/modules/device_model/domain/repository/device_repo.dart';
 import 'package:agri/modules/splash/domain/repository/splash_repository.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
 part 'splash_states.dart';
 
 class SplashNotifier extends Notifier<SplashStates> {
-  SplashNotifier(this._splasrepo, this._userLocalDataSource);
+  SplashNotifier(
+    this._splasrepo,
+    this._userLocalDataSource,
+    this._moduleRepository,
+  );
+
   final UserLocalDataSource _userLocalDataSource;
+  final DeviceModuleRepository _moduleRepository;
 
   @override
   SplashStates build() {
@@ -79,11 +86,10 @@ class SplashNotifier extends Notifier<SplashStates> {
           errorMessage: failure.message,
         );
       },
-      (user) {
+      (user) async {
         // _userLocalDataSource.saveUser(user);
+        await _moduleRepository.getMyModules();
         state = state.copyWith(loadingState: Requestenum.success, user: user);
-
-        // getdata();
       },
     );
   }
