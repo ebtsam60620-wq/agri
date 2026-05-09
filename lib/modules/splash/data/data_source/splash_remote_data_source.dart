@@ -7,5 +7,7 @@ abstract class SpalshRemoteDataSource {
 
   Future<Option<Failure, User>> getme();
 
+  Future<Option<Failure, User>> updateProfile({String? fullName, String? phone});
+
   void saveToken(String token);
 }

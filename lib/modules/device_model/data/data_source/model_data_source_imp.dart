@@ -123,9 +123,7 @@ class DeviceModelDataSourceImp implements DeviceModuleRemoteDataSource {
   Future<Option<Failure, Map<String, dynamic>>> getModuleOverview(
     int moduleId,
   ) async {
-    final result = await httpInterface.get(
-      url: '/modules/$moduleId/overview',
-    );
+    final result = await httpInterface.get(url: '/modules/$moduleId/overview');
     return result.fold((l) => l, (r) {
       return ModelParser.parse(() => r.data as Map<String, dynamic>);
     });
@@ -135,9 +133,7 @@ class DeviceModelDataSourceImp implements DeviceModuleRemoteDataSource {
   Future<Option<Failure, Map<String, dynamic>>> getModuleDashboard(
     int moduleId,
   ) async {
-    final result = await httpInterface.get(
-      url: '/modules/$moduleId/dashboard',
-    );
+    final result = await httpInterface.get(url: '/modules/$moduleId/dashboard');
     return result.fold((l) => l, (r) {
       return ModelParser.parse(() => r.data as Map<String, dynamic>);
     });
@@ -148,11 +144,17 @@ class DeviceModelDataSourceImp implements DeviceModuleRemoteDataSource {
     int moduleId,
   ) async {
     final result = await httpInterface.get(url: '/modules/$moduleId/latest');
-    return result.fold((l) => l, (r) {
-      return ModelParser.parse(
-        () => (r.data['latest'] ?? {}) as Map<String, dynamic>,
-      );
-    });
+
+    if (result.isLeft) return Left(result.left);
+
+    final data = result.right!.data;
+    if (data['latest'] == null) {
+      return Left(Failure('No latest reading', '404'));
+    }
+
+    return Right(
+      ModelParser.parse(() => data['latest'] as Map<String, dynamic>),
+    );
   }
 
   @override
@@ -183,9 +185,7 @@ class DeviceModelDataSourceImp implements DeviceModuleRemoteDataSource {
   Future<Option<Failure, List<Map<String, dynamic>>>> getSensors(
     int moduleId,
   ) async {
-    final result = await httpInterface.get(
-      url: '/modules/$moduleId/sensors',
-    );
+    final result = await httpInterface.get(url: '/modules/$moduleId/sensors');
     return result.fold((l) => l, (r) {
       return ModelParser.parse(() {
         final list = (r.data['sensors'] ?? []) as List;

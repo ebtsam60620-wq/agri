@@ -1,5 +1,8 @@
 import 'package:agri/core/configs/my_flutter_app_icons.dart';
+import 'package:agri/modules/crop_cycle/presentation/screens/crop_cycles_screen.dart';
 import 'package:agri/modules/home/presentation/screens/home_screen.dart';
+import 'package:agri/modules/device_model/presentation/screens/field_conditions_screen.dart';
+import 'package:agri/modules/splash/presentation/screens/profile_screen.dart';
 import 'package:agri/presentation/app_size_config.dart';
 import 'package:agri/presentation/components/custom_nav_bar.dart';
 import 'package:flutter/material.dart';
@@ -44,23 +47,25 @@ class MyScafold extends HookConsumerWidget {
     final notifier = ref.read(layoutProvider.notifier);
     return Scaffold(
       backgroundColor: ColorsManager.scaffoldBgColor,
-      body: Stack(
+      body: Column(
         children: [
-          Padding(
-            padding: EdgeInsets.only(
-              top: AppSizeConfig().topViewPadding + 20,
-              right: 15,
-              left: 15,
-            ),
-            child: LazyLoadIndexedStack(
-              index: page.index,
-              children: [
-                HomeScreen(),
-                Container(),
-                Container(),
-                Container(),
-                Container(),
-              ],
+          Expanded(
+            child: Padding(
+              padding: EdgeInsets.only(
+                top: AppSizeConfig().topViewPadding + 20,
+                right: 15,
+                left: 15,
+              ),
+              child: LazyLoadIndexedStack(
+                index: page.index,
+                children: [
+                  HomeScreen(),
+                  CropCyclesScreen(),
+                  Container(),
+                  const FieldConditionsScreen(),
+                  const ProfileScreen(),
+                ],
+              ),
             ),
           ),
           Align(

@@ -32,5 +32,5 @@ abstract class SplachRepo {
 
   void init();
   Future<Option<Failure, User>> getMe();
-
+  Future<Option<Failure, User>> updateProfile({String? fullName, String? phone});
 }

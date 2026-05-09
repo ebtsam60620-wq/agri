@@ -1,7 +1,5 @@
 import 'package:agri/core/utils/request_enum.dart';
-import 'package:agri/modules/auth/presentation/screens/otp_screen.dart';
 import 'package:agri/modules/auth/presentation/widgets/auth_scaffold.dart';
-import 'package:agri/modules/auth/presentation/widgets/auth_success_dialog.dart';
 import 'package:agri/presentation/components/error_container_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';

@@ -93,4 +93,23 @@ class SplashNotifier extends Notifier<SplashStates> {
       },
     );
   }
+
+  Future<void> updateProfile({String? fullName, String? phone}) async {
+    state = state.copyWith(loadingState: Requestenum.loading);
+    final result = await _splasrepo.updateProfile(
+      fullName: fullName,
+      phone: phone,
+    );
+
+    result.fold(
+      (failure) => state = state.copyWith(
+        loadingState: Requestenum.error,
+        errorMessage: failure.message,
+      ),
+      (user) => state = state.copyWith(
+        loadingState: Requestenum.success,
+        user: user,
+      ),
+    );
+  }
 }

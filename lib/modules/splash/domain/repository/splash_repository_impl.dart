@@ -27,4 +27,18 @@ class SplashRepositoryImpl extends SplachRepo {
     });
   }
 
+  @override
+  Future<Option<Failure, User>> updateProfile({
+    String? fullName,
+    String? phone,
+  }) async {
+    final result = await remoteDataSource.updateProfile(
+      fullName: fullName,
+      phone: phone,
+    );
+    return result.fold((left) => left, (right) {
+      localDataSource.saveUser(right);
+      return right;
+    });
+  }
 }

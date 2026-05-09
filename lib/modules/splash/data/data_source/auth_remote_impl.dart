@@ -27,4 +27,19 @@ class SplashRemoteDataSourceImpl extends SpalshRemoteDataSource {
       return ModelParser.parse(() => User.fromJson(r.data['data'] ??r.data['user'] ));
     });
   }
+
+  @override
+  Future<Option<Failure, User>> updateProfile({String? fullName, String? phone}) async {
+    final Map<String, dynamic> body = {};
+    if (fullName != null && fullName.isNotEmpty) body['full_name'] = fullName;
+    if (phone != null && phone.isNotEmpty) body['phone'] = phone;
+
+    final result = await httpInterface.put(
+      url: '/auth/me',
+      data: body,
+    );
+    return result.fold((l) => l, (r) {
+      return ModelParser.parse(() => User.fromJson(r.data['user'] ?? r.data));
+    });
+  }
 }

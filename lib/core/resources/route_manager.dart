@@ -10,7 +10,13 @@ import 'package:agri/modules/auth/presentation/screens/otp_screen.dart';
 import 'package:agri/modules/auth/presentation/screens/signup_user_first_screen.dart';
 import 'package:agri/modules/auth/presentation/screens/welcome_screen.dart';
 import 'package:agri/modules/device_model/domain/repository/device_repo.dart';
+import 'package:agri/modules/device_model/presentation/screens/add_device_screen.dart';
+import 'package:agri/modules/device_model/presentation/screens/devices_list_screen.dart';
+import 'package:agri/modules/device_model/presentation/screens/live_feed_screen.dart';
+import 'package:agri/modules/device_model/presentation/screens/scan_code_screen.dart';
+import 'package:agri/modules/notification/presentation/screens/alerts_screen.dart';
 import 'package:agri/modules/onboarding_screen/screens/onboarding_main.dart';
+import 'package:agri/modules/splash/presentation/screens/edit_profile_screen.dart';
 import 'package:agri/modules/splash/presentation/splash_screen.dart';
 import 'package:agri/presentation/components/my_scafold.dart';
 import 'package:agri/presentation/components/my_snackbar.dart';
@@ -133,9 +139,9 @@ class RouteManager {
     if (user.isVerified ?? false) {
       if ((((await di.get<DeviceModuleRepository>().getMyModules())
               .right
-              ?.isNotEmpty) ??
-          false)) {
-        replaceUntilOrAll(RouteManager.home);
+              ?.isEmpty) ??
+          true)) {
+        replaceUntilOrAll(RouteManager.addDeviceScreen);
       } else {
         replaceUntilOrAll(RouteManager.home);
       }
@@ -155,6 +161,12 @@ class RouteManager {
   static const String otp = '/otp';
   static const String signUpUser = '/SignUpUser';
   static const String createNewPassword = '/createNewPassword';
+  static const String addDeviceScreen = '/AddDeviceScreen';
+  static const String devicesList = '/devicesList';
+  static const String editProfile = '/editProfile';
+  static const String alerts = '/alerts';
+  static const String liveFeed = '/liveFeed';
+  static const String scanCodeScreen = '/ScanCodeScreen';
 
   static const String terms = '/terms';
 
@@ -212,6 +224,12 @@ class RouteManager {
             createNewPassword => const NewPasswordScreen(),
             signUpUser => const SignUpUserFirstScreen(),
             home => const MyScafold(),
+            addDeviceScreen => const AddDeviceScreen(),
+            devicesList => const DevicesListScreen(),
+            editProfile => const EditProfileScreen(),
+            alerts => const AlertsScreen(),
+            liveFeed => const LiveFeedScreen(),
+            scanCodeScreen => const ScanCodeScreen(),
             _ => const SplashScreen(),
           },
         );

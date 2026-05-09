@@ -1,5 +1,7 @@
 import 'package:agri/core/utils/request_enum.dart';
+import 'package:agri/data/models/option.dart';
 import 'package:agri/modules/device_model/data/model/device_module.dart';
+import 'package:agri/modules/device_model/data/model/live_token_response.dart';
 import 'package:agri/modules/device_model/domain/repository/device_repo.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -47,11 +49,17 @@ class DeviceController extends AutoDisposeNotifier<DeviceState> {
     );
     final result = await _repo.getMyModules(fromLocal: fromLocal);
 
-    result.fold(
-      (f) => state = state.copyWith(status: Requestenum.error),
-      (list) =>
-          state = state.copyWith(status: Requestenum.success, devices: list),
-    );
+    result.fold((f) => state = state.copyWith(status: Requestenum.error), (
+      list,
+    ) {
+      final active =
+          state.activeModule ?? (list.isNotEmpty ? list.first : null);
+      state = state.copyWith(
+        status: Requestenum.success,
+        devices: list,
+        activeModule: active,
+      );
+    });
   }
 
   Future<void> updateModule(int? id, {String? nickname}) async {
@@ -110,5 +118,21 @@ class DeviceController extends AutoDisposeNotifier<DeviceState> {
 
   void updateLimit(int newLimit) {
     state = state.copyWith(automationLimit: newLimit);
+  }
+
+  void setActiveModule(DeviceModule? module) {
+    state = state.copyWith(activeModule: module);
+  }
+
+  Future<LiveTokenResponse?> getLiveToken(int id) async {
+    _setLoading(id, true);
+    final result = await _repo.getLiveToken(id);
+    _setLoading(id, false);
+
+    if (result.isLeft) {
+      state = state.copyWith(errorMessage: result.left!.message);
+      return null;
+    }
+    return result.right;
   }
 }
