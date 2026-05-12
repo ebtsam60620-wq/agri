@@ -1,4 +1,5 @@
 import 'package:agri/core/configs/my_flutter_app_icons.dart';
+import 'package:agri/modules/ai/presentation/screens/ai_analyses_screen.dart';
 import 'package:agri/modules/crop_cycle/presentation/screens/crop_cycles_screen.dart';
 import 'package:agri/modules/home/presentation/screens/home_screen.dart';
 import 'package:agri/modules/device_model/presentation/screens/field_conditions_screen.dart';
@@ -61,7 +62,7 @@ class MyScafold extends HookConsumerWidget {
                 children: [
                   HomeScreen(),
                   CropCyclesScreen(),
-                  Container(),
+                  AiAnalysesScreen(),
                   const FieldConditionsScreen(),
                   const ProfileScreen(),
                 ],
