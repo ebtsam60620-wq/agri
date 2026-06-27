@@ -177,32 +177,7 @@ class DeviceOverviewWidget extends StatelessWidget {
               ),
             ],
           ),
-          InkWell(
-            onTap: () => RouteManager.goTo(RouteManager.liveFeed),
-            child: Container(
-              width: double.infinity,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-              decoration: BoxDecoration(
-                color: ColorsManager.lightGreen,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: const Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.videocam_rounded, color: ColorsManager.black),
-                  SizedBox(width: 8),
-                  Text(
-                    'View Live Stream',
-                    style: TextStyle(
-                      color: ColorsManager.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ),
+
         ],
       ),
     );

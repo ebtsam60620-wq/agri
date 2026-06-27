@@ -1,6 +1,7 @@
 class Assets {
   Assets._(); // Private constructor to prevent instantiation
   static const String pngWelcomeImage = 'assets/png/welcome_photo.png';
+  static const String pngAppSplash = 'assets/png/app_splash.png';
 
   static const String svgGGreen = 'assets/SVG/g_green.svg';
   static const String svgGWhiteGreen = 'assets/SVG/g_white_green.svg';

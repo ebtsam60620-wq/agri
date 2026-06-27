@@ -70,11 +70,11 @@ flutter_native_splash:
   ios: false
   web: false
   color: "#ffffff" # Background color
-  image: assets\png\app_splash.png # Your splash image path
+  image: assets/png/app_splash.png # Your splash image path
   android_gravity: center
   # Configeration for The Splash screen for Android 12+
   android_12:
-    image: assets\png\app_splash.png # Background image for Android 12
+    image: assets/png/app_splash.png # Background image for Android 12
     color: "#ffffff" # Background color for Android 12
     # icon_background_color: "#0082FE" # Icon background color
     # android_gravity: fill # Stretch the image to fill the screen

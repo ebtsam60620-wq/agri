@@ -20,6 +20,12 @@ import 'package:agri/data/interfaces/abstract_http_data_source.dart' as _i651;
 import 'package:agri/data/interfaces/dio_http_impl.dart' as _i581;
 import 'package:agri/data/interfaces/soket_data_empl.dart' as _i168;
 import 'package:agri/data/interfaces/soket_data_source.dart' as _i609;
+import 'package:agri/modules/ai/data/data_source/ai_remote_data_source.dart'
+    as _i416;
+import 'package:agri/modules/ai/data/data_source/ai_remote_data_source_imp.dart'
+    as _i1031;
+import 'package:agri/modules/ai/data/repository/ai_repository_imp.dart' as _i9;
+import 'package:agri/modules/ai/domain/repository/ai_repository.dart' as _i223;
 import 'package:agri/modules/auth/data/data_source/auth_remote_data_source.dart'
     as _i103;
 import 'package:agri/modules/auth/data/data_source/auth_remote_impl.dart'
@@ -94,11 +100,17 @@ extension GetItInjectableX on _i174.GetIt {
       return i.init().then((_) => i);
     }, preResolve: true);
     gh.lazySingleton<_i651.HttpDataSource>(() => _i581.DioHttpImpl());
+    gh.lazySingleton<_i416.AiRemoteDataSource>(
+      () => _i1031.AiRemoteDataSourceImp(gh<_i651.HttpDataSource>()),
+    );
     gh.lazySingleton<_i234.CropCycleRemoteDataSource>(
       () => _i599.CropCycleRemoteDataSourceImp(gh<_i651.HttpDataSource>()),
     );
     gh.lazySingleton<_i251.CropCycleRepository>(
       () => _i45.CropCycleRepositoryImp(gh<_i234.CropCycleRemoteDataSource>()),
+    );
+    gh.lazySingleton<_i223.AiRepository>(
+      () => _i9.AiRepositoryImp(gh<_i416.AiRemoteDataSource>()),
     );
     gh.lazySingleton<_i103.AuthRemoteDataSource>(
       () => _i831.AuthRemoteDataSourceImpl(gh<_i651.HttpDataSource>()),

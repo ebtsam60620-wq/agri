@@ -102,28 +102,11 @@ class AnimatedLogoSplashState extends ConsumerState<AnimatedLogoSplash> {
     });
     return FadeTransition(
       opacity: animationController,
-      child: Stack(
-        children: [
-          Center(
-            child: SvgPicture.asset(
-              Assets.svgLogoWhiteS,
-              height: widget.isTablet ? widget.width * 0.5 : widget.width * 0.4,
-              fit: BoxFit.cover,
-            ),
-          ),
-          Positioned.directional(
-            textDirection: TextDirection.ltr,
-            bottom: 0,
-            start: 0,
-            child: SvgPicture.asset(Assets.svgLogoWhiteS),
-          ),
-          Positioned.directional(
-            textDirection: TextDirection.ltr,
-            end: 0,
-            bottom: widget.isTablet ? widget.width * 0.1 : widget.width * 0.15,
-            child: SvgPicture.asset(Assets.svgLogoWhiteS, fit: BoxFit.cover),
-          ),
-        ],
+      child: Image.asset(
+        Assets.pngAppSplash,
+        width: double.infinity,
+        height: double.infinity,
+        fit: BoxFit.cover,
       ),
     );
   }

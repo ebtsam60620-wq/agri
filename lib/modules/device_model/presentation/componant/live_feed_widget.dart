@@ -1,19 +1,16 @@
 import 'package:agri/core/configs/colors_manager.dart';
-import 'package:agri/notifiers.dart';
-import 'package:agri/presentation/components/custom_back_btn.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:livekit_client/livekit_client.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class LiveFeedScreen extends ConsumerStatefulWidget {
-  const LiveFeedScreen({super.key});
+class LiveFeedWidget extends StatefulWidget {
+  const LiveFeedWidget({super.key});
 
   @override
-  ConsumerState<LiveFeedScreen> createState() => _LiveFeedScreenState();
+  State<LiveFeedWidget> createState() => _LiveFeedWidgetState();
 }
 
-class _LiveFeedScreenState extends ConsumerState<LiveFeedScreen> {
+class _LiveFeedWidgetState extends State<LiveFeedWidget> {
   Room? _room;
   bool _connecting = false;
   String? _error;
@@ -75,75 +72,64 @@ class _LiveFeedScreenState extends ConsumerState<LiveFeedScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
-        child: Stack(
-          children: [
-            if (_room != null)
-              Center(child: _VideoView(room: _room!))
-            else if (_connecting)
-              const Center(
-                child: CircularProgressIndicator(
-                  color: ColorsManager.lightGreen,
-                ),
-              )
-            else if (_error != null)
-              Center(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(_error!, style: const TextStyle(color: Colors.white)),
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: _connect,
-                      child: const Text('Retry'),
-                    ),
-                  ],
-                ),
+    return Container(
+      width: double.infinity,
+      height: 250,
+      decoration: BoxDecoration(
+        color: ColorsManager.black,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      clipBehavior: Clip.hardEdge,
+      child: Stack(
+        children: [
+          if (_room != null)
+            Center(child: _VideoView(room: _room!))
+          else if (_connecting)
+            const Center(
+              child: CircularProgressIndicator(
+                color: ColorsManager.lightGreen,
               ),
-
-            // Header
-            Positioned(
-              top: 16,
-              left: 20,
-              right: 20,
-              child: Row(
+            )
+          else if (_error != null)
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const SizedBox(width: 50, height: 50, child: CustomBackBtn()),
-                  const SizedBox(width: 16),
-                  const Text(
-                    'Live Feed',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  Text(_error!, style: const TextStyle(color: Colors.white)),
+                  const SizedBox(height: 16),
+                  ElevatedButton(
+                    onPressed: _connect,
+                    child: const Text('Retry'),
                   ),
-                  const Spacer(),
-                  if (_room != null)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
-                        vertical: 4,
-                      ),
-                      decoration: BoxDecoration(
-                        color: Colors.red,
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                      child: const Text(
-                        'LIVE',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ),
                 ],
               ),
+            )
+          else
+             const SizedBox.shrink(),
+          
+          if (_room != null)
+            Positioned(
+              top: 16,
+              right: 16,
+              child: Container(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 12,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: Colors.red,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  'LIVE',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
-          ],
-        ),
+        ],
       ),
     );
   }

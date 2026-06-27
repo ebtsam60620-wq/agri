@@ -1,6 +1,7 @@
 import 'package:agri/core/configs/colors_manager.dart';
 import 'package:agri/core/resources/assets.dart';
 import 'package:agri/core/resources/route_manager.dart';
+import 'package:agri/core/utils/extension_methods.dart';
 import 'package:agri/notifiers.dart';
 import 'package:agri/presentation/components/my_scafold.dart';
 import 'package:flutter/material.dart';
@@ -134,7 +135,9 @@ class SettingsList extends ConsumerWidget {
         SettingsItem(
           icon: IconsaxPlusLinear.messages_2,
           label: 'Chat With Expert',
-          onTap: () {},
+          onTap: () {
+            '01211501846'.openWhatsApp();
+          },
         ),
         SettingsItem(
           icon: IconsaxPlusLinear.logout,

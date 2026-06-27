@@ -22,7 +22,7 @@ class AiRemoteDataSourceImp implements AiRemoteDataSource {
     };
 
     final result = await httpInterface.get(
-      url: '/analyses',
+      url: '/ai/analyses',
       queryParameters: queryParams,
     );
     return result.fold((l) => l, (r) => r);

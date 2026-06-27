@@ -1,6 +1,7 @@
 import 'package:agri/core/utils/request_enum.dart';
 import 'package:agri/modules/ai/data/model/ai_analysis_model.dart';
 import 'package:agri/notifiers.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:intl/intl.dart';
@@ -31,7 +32,8 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
   }
 
   void _onScroll() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+    if (_scrollController.position.pixels >=
+        _scrollController.position.maxScrollExtent - 200) {
       ref.read(aiProvider.notifier).fetchMoreAnalyses();
     }
   }
@@ -47,11 +49,13 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('AI Analyses'),
+        backgroundColor: Colors.transparent,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        scrolledUnderElevation: 0,
+        shadowColor: Colors.black.withOpacity(0.1),
       ),
-      body: RefreshIndicator(
-        onRefresh: _onRefresh,
-        child: _buildBody(aiState),
-      ),
+      body: RefreshIndicator(onRefresh: _onRefresh, child: _buildBody(aiState)),
     );
   }
 
@@ -59,6 +63,7 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
     if (aiState.status == Requestenum.loading && aiState.analyses.isEmpty) {
       return ListView.builder(
         itemCount: 6,
+        padding: const EdgeInsets.all(16.0),
         itemBuilder: (context, index) => const _AiAnalysisSkeleton(),
       );
     }
@@ -82,9 +87,7 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
     }
 
     if (aiState.status == Requestenum.success && aiState.analyses.isEmpty) {
-      return const Center(
-        child: Text('No analyses found.'),
-      );
+      return const Center(child: Text('No analyses found.'));
     }
 
     return ListView.builder(
@@ -104,13 +107,9 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
 
   Widget _buildBottomIndicator(aiState) {
     if (aiState.isFetchingMore) {
-      return const Padding(
-        padding: EdgeInsets.all(16.0),
-        child: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    } else if (aiState.status == Requestenum.error && aiState.analyses.isNotEmpty) {
+      return Center(child: CircularProgressIndicator());
+    } else if (aiState.status == Requestenum.error &&
+        aiState.analyses.isNotEmpty) {
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Center(
@@ -122,7 +121,8 @@ class _AiAnalysesScreenState extends ConsumerState<AiAnalysesScreen> {
                 textAlign: TextAlign.center,
               ),
               TextButton(
-                onPressed: () => ref.read(aiProvider.notifier).fetchMoreAnalyses(),
+                onPressed: () =>
+                    ref.read(aiProvider.notifier).fetchMoreAnalyses(),
                 child: const Text('Retry'),
               ),
             ],
@@ -143,12 +143,13 @@ class _AiAnalysisCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dateStr = analysis.createdAt != null 
-        ? DateFormat.yMMMd().add_Hm().format(analysis.createdAt!) 
+    final dateStr = analysis.createdAt != null
+        ? DateFormat.yMMMd().add_Hm().format(analysis.createdAt!)
         : 'Unknown Date';
 
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -159,45 +160,167 @@ class _AiAnalysisCard extends StatelessWidget {
               children: [
                 Text(
                   dateStr,
-                  style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey),
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
                 ),
-                if (analysis.moduleNickname != null)
+                if (analysis.moduleNickname != null ||
+                    analysis.moduleCode != null)
                   Chip(
-                    label: Text(analysis.moduleNickname!, style: const TextStyle(fontSize: 10)),
+                    label: Text(
+                      analysis.moduleNickname ?? analysis.moduleCode!,
+                      style: const TextStyle(
+                        fontSize: 10,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                     visualDensity: VisualDensity.compact,
+                    backgroundColor: theme.colorScheme.primaryContainer,
                   ),
               ],
             ),
             const SizedBox(height: 12),
             Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                if (analysis.imageUrl != null) ...[
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: CachedNetworkImage(
+                      imageUrl: analysis.imageUrl!,
+                      width: 60,
+                      height: 60,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.grey[200],
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) => Container(
+                        width: 60,
+                        height: 60,
+                        color: Colors.grey[200],
+                        child: const Icon(
+                          Icons.broken_image,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                ],
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Disease Detection', style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(
-                        analysis.disease.detected 
-                            ? (analysis.disease.name ?? 'Disease Detected') 
-                            : 'Healthy',
+                      const Text(
+                        'Disease Detection',
                         style: TextStyle(
-                          color: analysis.disease.detected ? Colors.red : Colors.green,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.grey,
                         ),
                       ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            analysis.disease.detected
+                                ? Icons.warning_amber_rounded
+                                : Icons.check_circle_outline,
+                            color: analysis.disease.detected
+                                ? Colors.red
+                                : Colors.green,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              analysis.disease.detected
+                                  ? (analysis.disease.name ??
+                                        'Disease Detected')
+                                  : 'Healthy',
+                              style: TextStyle(
+                                color: analysis.disease.detected
+                                    ? Colors.red
+                                    : Colors.green,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (analysis.disease.confidence != null)
+                        Text(
+                          'Confidence: ${(analysis.disease.confidence! * 100).toStringAsFixed(1)}%',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
+                      if (analysis.disease.treatment != null) ...[
+                        const SizedBox(height: 4),
+                        Text(
+                          analysis.disease.treatment!,
+                          style: theme.textTheme.bodySmall,
+                          maxLines: 3,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ],
                   ),
                 ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('Harvest Status', style: TextStyle(fontWeight: FontWeight.bold)),
-                      Text(
-                        analysis.harvest.status?.replaceAll('_', ' ').toUpperCase() ?? 'N/A',
+                      const Text(
+                        'Harvest Status',
                         style: TextStyle(
-                          color: analysis.harvest.status == 'ready' ? Colors.green : Colors.orange,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
+                          color: Colors.grey,
                         ),
                       ),
+                      const SizedBox(height: 4),
+                      Row(
+                        children: [
+                          Icon(
+                            analysis.harvest.status == 'ready'
+                                ? Icons.eco
+                                : Icons.eco_outlined,
+                            color: analysis.harvest.status == 'ready'
+                                ? Colors.green
+                                : Colors.orange,
+                            size: 18,
+                          ),
+                          const SizedBox(width: 4),
+                          Expanded(
+                            child: Text(
+                              analysis.harvest.status
+                                      ?.replaceAll('_', ' ')
+                                      .toUpperCase() ??
+                                  'N/A',
+                              style: TextStyle(
+                                color: analysis.harvest.status == 'ready'
+                                    ? Colors.green
+                                    : Colors.orange,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      if (analysis.harvest.confidence != null)
+                        Text(
+                          'Confidence: ${(analysis.harvest.confidence! * 100).toStringAsFixed(1)}%',
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: Colors.grey[600],
+                          ),
+                        ),
                     ],
                   ),
                 ),

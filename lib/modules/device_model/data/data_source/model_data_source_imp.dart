@@ -48,6 +48,8 @@ class DeviceModelDataSourceImp implements DeviceModuleRemoteDataSource {
   @override
   Future<Option<Failure, List<DeviceModule>>> getMyModules() async {
     final result = await httpInterface.get(url: '/modules/my');
+    Iterable i = [];
+    i = [].toSet();
     return result.fold((l) => l, (r) {
       // if(r.data)
       return ModelParser.parse(() {

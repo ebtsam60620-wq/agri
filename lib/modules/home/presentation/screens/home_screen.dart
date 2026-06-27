@@ -11,6 +11,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:iconsax_plus/iconsax_plus.dart';
 import 'package:agri/modules/device_model/presentation/componant/device_overview_widget.dart';
 import 'package:agri/modules/device_model/data/model/device_module.dart';
+import 'package:agri/modules/device_model/presentation/componant/live_feed_widget.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -99,6 +100,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
             ),
 
           DeviceOverviewWidget(activeModule: deviceState.activeModule),
+          if (deviceState.activeModule != null) ...[
+            const LiveFeedWidget(),
+          ],
         ],
       ),
     );
